@@ -1,0 +1,7 @@
+16.02 :  Alle: Plannung des Projekts, Github erstellt
+        Niki erstellt datenbank User
+        Kaan erstellt datenbank Devices
+        Timo erstellt Datenbank Room
+        Thomas mercht
+
+17.02
