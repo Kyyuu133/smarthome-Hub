@@ -2,6 +2,6 @@
         Niki erstellt datenbank User
         Kaan erstellt datenbank Devices
         Timo erstellt Datenbank Room
-        Thomas mercht
+        Thomas merged
 
 17.02
