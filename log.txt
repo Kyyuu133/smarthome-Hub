@@ -25,10 +25,20 @@ ________________________________________________________________________________
                 Code für Emulation der Umgebungskonditionen - Lichtverhalten, Temperaturverhalten
         --------------------------------------------------------------------------------------------------
         11:00 Checkup:
-
         --------------------------------------------------------------------------------------------------
-        12:00 Ziele für morgen definieren:
-
+        Timo:   
+                Loginmaske erster Ansatz steht, API Calls werden implementiert
+        Niki:   
+                erster Ansatz für Konditionen und wie sie miteinander interagieren
+        Thomas: 
+                klassen in main.py hinzugefügt, 
+                einzelne datenbanken gelöscht und zusammengeführt
+        Kaan:
+                Inspirations HTML für Dashboard erstellt mit Claude, 
+                morgen dann loginmaske von timo über eigene html
+        --------------------------------------------------------------------------------------------------
+        12:00 Ende & Ziele für morgen definieren: 
+                Morgens code review und push abstimmung, dann an bereichen arbeiten, mergen
         --------------------------------------------------------------------------------------------------        
 
 _________________________________________________________________________________________________________
