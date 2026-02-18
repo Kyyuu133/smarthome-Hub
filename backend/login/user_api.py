@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
-from user_pw_check import username_check, password_check
+from login import username_check, password_check
 from typing import Optional
 import sqlite3
 
@@ -63,7 +63,10 @@ async def remove_user(user: User):#
 #add user post request
 @app.post("/add_user")
 async def add_user(user: User):
-    
+    '''
+    Docstring for add_user
+    Adds a user to the database
+    '''
     #username and password check
     username_result = username_check(user.user_name)
     if username_result != user.user_name:
@@ -91,3 +94,50 @@ async def add_user(user: User):
     conn.close()
 
     return {"message": f"User '{user.user_name}' wurde als {user_role} angelegt"}
+
+#role update functino and query
+@app.put("/user_role")
+async def update_user_role(user: User):
+    #db connnection
+    conn, curs = get_db()
+    #check if user exists
+    existing = curs.execute(
+        "SELECT * FROM users WHERE user_id = ? AND user_name = ?",
+        (user.user_id, user.user_name)
+    ).fetchone()
+    
+    if existing is None:
+        conn.close()
+        return {"message": f"User '{user.user_name}' existiert nicht"}
+    #role update query
+    curs.execute(
+        "UPDATE users SET user_role = ? WHERE user_id = ? AND user_name = ?",
+        (user.user_role, user.user_id, user.user_name)
+    )
+    #connection close and update
+    conn.commit()
+    conn.close()
+
+    return {"message": f"User '{user.user_name}' wurde als {user.user_role} aktualisiert"}
+#update password function and query
+@app.put("/user_password")
+async def update_user_password(user: User):
+    #db connection
+    conn, curs = get_db()
+    existing = curs.execute(
+        "SELECT * FROM users WHERE user_id = ? AND user_name = ?",
+        (user.user_id, user.user_name)
+    ).fetchone()
+    #check if user exists
+    if existing is None:
+        conn.close()
+        return {"message": f"User '{user.user_name}' existiert nicht"}
+    #update password query
+    curs.execute(
+        "UPDATE users SET user_password = ? WHERE user_id = ? AND user_name = ?",
+        (user.user_password, user.user_id, user.user_name)
+    )
+    #connection close and update
+    conn.commit()
+    conn.close()
+    return {"message": f"Das Passwort User '{user.user_name}' wurde auf {user.user_password} geändert"}
