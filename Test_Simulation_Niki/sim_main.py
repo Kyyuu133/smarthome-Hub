@@ -39,7 +39,7 @@ regeln = [
 ]
 
 # 4. Simulator starten
-sim = DaySimulator(speed=1.5)
+sim = DaySimulator(speed=2.0)
 for regel in regeln:
     sim.add_rule(regel)
 
