@@ -64,10 +64,52 @@ class Device:
         Status: {state}
         """)
 
+class Lamp(Device):
 
+    def __init__(self, device_id, device_name, status, room_id, database, brightness=0):
+        
+        
+        super().__init__(
+            device_id=device_id,
+            device_name=device_name,
+            device_type="Lamp",   
+            status=status,
+            room_id=room_id,
+            database=database
+        )
+
+
+
+class alarm_clock(Device):
+
+    def __init__(self, device_id, device_name, status, room_id, database, brightness=0):
+        
+        
+        super().__init__(
+            device_id=device_id,
+            device_name=device_name,
+            device_type="alarm_clock",   
+            status=status,
+            room_id=room_id,
+            database=database
+        )
+
+class thermostat(Device):
+
+    def __init__(self, device_id, device_name, status, room_id, database, brightness=0):
+        
+        
+        super().__init__(
+            device_id=device_id,
+            device_name=device_name,
+            device_type="thermostat",   
+            status=status,
+            room_id=room_id,
+            database=database
+        )
         # so erstellt man ein device und saved es
 
-        #lampe = Device(
+        #device1 = Device(
     #device_id=None,                            automatisch
     #device_name="Living Room Lamp",
     #device_type="Lamp",
