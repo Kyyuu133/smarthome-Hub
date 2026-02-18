@@ -1,6 +1,6 @@
 import time
 from datetime import datetime, timedelta, time as dtime
-from Niki_Test.devices import Device, SmartHomeHub   # nimmt die Klassen aus devices (Main)
+from Test_Simulation_Niki.sim_devices import Device, SmartHomeHub   # nimmt die Klassen aus devices (Main)
 
 
 class TimeCondition:
