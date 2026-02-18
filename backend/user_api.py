@@ -5,12 +5,14 @@ from typing import Optional
 import sqlite3
 
 app = FastAPI()
+
 #connect to db function
 def get_db():
     conn = sqlite3.connect("hub.db")
     conn.row_factory = sqlite3.Row
     curs = conn.cursor()
     return conn, curs
+
 #class User
 class User(BaseModel):
     user_name: str
