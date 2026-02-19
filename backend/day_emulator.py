@@ -86,15 +86,15 @@ class DayEmulator:
   
 
     def get_current_temperature(self) -> float:
-        ### Gibt die aktuelle simulierte Temperatur zurück.
+        # Gibt die aktuelle simulierte Temperatur zurück.
         return self.current_temp
 
     def get_current_hour(self) -> int:
-        ### Gibt die aktuelle simulierte Stunde zurück.
+        # Gibt die aktuelle simulierte Stunde zurück.
         return self.current_hour
 
     def get_log(self) -> list[dict]:
-        ### Gibt das vollständige Tagesprotokoll zurück.
+        # Gibt das vollständige Tagesprotokoll zurück.
         return self._log
 
     def simulate_day(self, on_hour_callback=None):

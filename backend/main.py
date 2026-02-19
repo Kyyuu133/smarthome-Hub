@@ -93,7 +93,7 @@ class SmartHomeHub:
 if __name__ == "__main__":
 
     
-    db = Database("hub.sql")
+    db = Database("hub.db")
 
     
     hub = SmartHomeHub(db)

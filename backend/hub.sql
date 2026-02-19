@@ -3,9 +3,9 @@ PRAGMA foreign_keys = ON;
 -- 1. Users Tabelle
 CREATE TABLE IF NOT EXISTS users (
     user_id       INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_name     TEXT    NOT NULL UNIQUE,
-    user_passwort TEXT    NOT NULL,
-    rolle         TEXT    NOT NULL CHECK(rolle IN ('admin', 'user'))
+    user_name     TEXT    NOT NULL,
+    user_password TEXT    NOT NULL,
+    user_role         TEXT    NOT NULL CHECK(rolle IN ('admin', 'user'))
 );
 
 -- 2. Rooms Tabelle
