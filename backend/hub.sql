@@ -39,8 +39,8 @@ CREATE TABLE IF NOT EXISTS devices (
 CREATE TABLE IF NOT EXISTS sensor_data (
     device_id INTEGER,
     sensor_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    sensor_type TEXT NOT NULL,
-    sensor_value INTEGER NOT NULL,
+    sensor_type TEXT NOT NULL CHECK(sensor_type IN ('temperature', 'brightness')),
+    sensor_value INTEGER NOT NULL CHECK(sensor_value in ('°C', 'lux')),
     sensor_timestamp TEXT NOT NULL DEFAULT '',
     FOREIGN KEY (device_id) REFERENCES devices(device_id)
 );
@@ -49,17 +49,18 @@ CREATE TABLE IF NOT EXISTS sensor_data (
 CREATE TABLE IF NOT EXISTS device_event_log (
     event_id   INTEGER PRIMARY KEY AUTOINCREMENT,
     device_id INTEGER,
-    event_type BOOL NOT NULL, -- true = turned_on, false = turned_off
+    device_status BOOLEAN NOT NULL DEFAULT 0,
     event_timestamp TEXT NOT NULL DEFAULT '',
-    FOREIGN KEY (device_id) REFERENCES devices(device_id)
+    FOREIGN KEY (device_id) REFERENCES devices(device_id),
+    FOREIGN KEY (device_status) REFERENCES devices(device_status) 
 );
 
 -- 7. Automation rules
 CREATE TABLE IF NOT EXISTS automation_rules (
     automation_id INTEGER PRIMARY KEY AUTOINCREMENT,
     automation_name TEXT NOT NULL,
-    automation_acitve BOOL NOT NULL, -- true = enabled, false = disabled
-    trigger_type TEXT NOT NULL, -- "sensor", "time"
-    device_status BOOLEAN,
-    FOREIGN KEY (device_status) REFERENCES devices(device_status),
+    automation_acitve BOOL NOT NULL DEFAULT 0, -- true = enabled, false = disabled
+    trigger_type TEXT NOT NULL CHECK(trigger_type IN('sensor', 'time')),
+    device_status BOOLEAN NOT NULL DEFAULT 0,
+    FOREIGN KEY (device_status) REFERENCES devices(device_status)
 );
