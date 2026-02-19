@@ -78,23 +78,33 @@ ________________________________________________________________________________
 
 _________________________________________________________________________________________________________
 
-Donnerstag, 19.02.2026 (Kaan):
+Donnerstag, 19.02.2026 (Timo):
 _________________________________________________________________________________________________________
-        Alle: 
+        Alle: Morgens CheckUp, Codereview und Verständnisfragen geklärt. 
+              Tagesaufgaben für jeden durchgesprochen.
                
-        Thomas:
+        Thomas: db mit testdateien gefülllt, raumerstellung um umgebung zu testen, 
+                geräte werden mit typ, name, id definiert und räumen zugeteilt
                
-        Timo:
+        Timo: put queries reviewed und geprüft und zur übergabe an Kaan besprochen
+
                
-        Kaan:
+        Kaan: update_role, update_password queries von Timo übernommen und in html konvertiert,
+              dashboard html geschrieben, 
                
-        Nikolas:
-               
-        --------------------------------------------------------------------------------------------------
-        11:00 Checkup:
+        Nikolas: Tagesemulator neu geschrieben, Simulator wird mit datenbank verbunden
 
         --------------------------------------------------------------------------------------------------
-        12:00 Ziele für morgen definieren:
+        12:00 Ziele für morgen definiert:
+                Tagesemulator optimieren mit devices
+                Raumerstellung py mit api endpoints fürs frontend vorkauen
+                hub.db wird optimiert, sql table column update code
+                sensor reading, device event-log sql vorbereiten
+                automation rule sql vorebereiten
+                user_api - rollen können verändert werden, 
+                passwort kann verändert werden,
+                admin rechte definieren regeln anwenden
+                dashboard.html läuft
 
         --------------------------------------------------------------------------------------------------        
 
