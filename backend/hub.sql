@@ -32,8 +32,8 @@ CREATE TABLE IF NOT EXISTS devices (
 -- ALTER TABLE devices RENAME COLUMN status TO device_status;
 -- ALTER TABLE sensor_data DROP COLUMN sensor_timestamp;
 -- ALTER TABLE device_event_log DROP COLUMN event_time;
-ALTER TABLE sensor_data ADD COLUMN sensor_timestamp TEXT NOT NULL DEFAULT '';
-ALTER TABLE device_event_log ADD COLUMN event_timestamp TEXT NOT NULL DEFAULT '';
+-- ALTER TABLE sensor_data ADD COLUMN sensor_timestamp TEXT NOT NULL DEFAULT '';
+-- ALTER TABLE device_event_log ADD COLUMN event_timestamp TEXT NOT NULL DEFAULT '';
 
 -- 5. Sensor Data
 CREATE TABLE IF NOT EXISTS sensor_data (
