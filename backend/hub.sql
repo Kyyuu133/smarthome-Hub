@@ -26,10 +26,14 @@ CREATE TABLE IF NOT EXISTS devices (
     FOREIGN KEY (room_id) REFERENCES rooms(room_id)
 );
 
--- 4. Table column name update
-ALTER TABLE users RENAME COLUMN user_passwort TO user_password;
-ALTER TABLE users RENAME COLUMN rolle TO user_role;
-ALTER TABLE devices RENAME COLUMN status TO device_status;
+-- -- 4. Table column name update
+-- ALTER TABLE users RENAME COLUMN user_passwort TO user_password;
+-- ALTER TABLE users RENAME COLUMN rolle TO user_role;
+-- ALTER TABLE devices RENAME COLUMN status TO device_status;
+-- ALTER TABLE sensor_data DROP COLUMN sensor_timestamp;
+-- ALTER TABLE device_event_log DROP COLUMN event_time;
+ALTER TABLE sensor_data ADD COLUMN sensor_timestamp TEXT NOT NULL DEFAULT '';
+ALTER TABLE device_event_log ADD COLUMN event_timestamp TEXT NOT NULL DEFAULT '';
 
 -- 5. Sensor Data
 CREATE TABLE IF NOT EXISTS sensor_data (
@@ -37,7 +41,7 @@ CREATE TABLE IF NOT EXISTS sensor_data (
     sensor_id INTEGER PRIMARY KEY AUTOINCREMENT,
     sensor_type TEXT NOT NULL,
     sensor_value INTEGER NOT NULL,
-    sensor_timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+    sensor_timestamp TEXT NOT NULL DEFAULT '',
     FOREIGN KEY (device_id) REFERENCES devices(device_id)
 );
 
@@ -46,7 +50,7 @@ CREATE TABLE IF NOT EXISTS device_event_log (
     event_id   INTEGER PRIMARY KEY AUTOINCREMENT,
     device_id INTEGER,
     event_type BOOL NOT NULL, -- true = turned_on, false = turned_off
-    event_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+    event_timestamp TEXT NOT NULL DEFAULT '',
     FOREIGN KEY (device_id) REFERENCES devices(device_id)
 );
 
