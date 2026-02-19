@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS devices (
     room_id     INTEGER,
     device_name TEXT    NOT NULL UNIQUE,
     device_type TEXT    NOT NULL,
-    device_status      BOOLEAN NOT NULL DEFAULT 0,
+    devicse_status      BOOLEAN NOT NULL DEFAULT 0,
     FOREIGN KEY (room_id) REFERENCES rooms(room_id)
 );
 
@@ -57,5 +57,5 @@ CREATE TABLE IF NOT EXISTS automation_rules (
     automation_acitve BOOL NOT NULL, -- true = enabled, false = disabled
     trigger_type TEXT NOT NULL, -- "sensor", "time"
     device_status BOOLEAN,
-    FOREIGN KEY (device_status) REFERENCES devices(device_status)
+    FOREIGN KEY (device_status) REFERENCES devices(device_status),
 );
