@@ -46,21 +46,34 @@ ________________________________________________________________________________
 Mittwoch, 18.02.2026 (Kaan):
 _________________________________________________________________________________________________________
         Alle: 
+                Morgens Checkup & Code Review
                
         Thomas:
-               
+               Devicetest.py erstellt um zu sehen ob geräte erstellt werden können, 
+               datenbank für devices wird erstellt, relationen definiert, 
+               smarthome hub file für wertänderungen erstellt,
+               Testeinträge in die hub.db eingefügt
+               child devices in die device.py eingefügt
+               nochmal anschauen wie bibs mit der requierment.txt funktioniert
         Timo:
-               
+               FastAPI Login Maske erstellt, User können erstellt werden, 
+               1. konto “admin”, danach “user”,
+               an User/Login Backend_API weitergearbeitet
         Kaan:
-               
+               Frontend-HTML erstellt, site-referencing grundstruktur erstellt,
+               passwortparametercheck funktioniert, 1. user admin funktioniert,
+               user anlegen funktioniert, Loginmaske erstellt & referenziert
+               log.txt in git gefüllt
         Nikolas:
-               
+               Zeitsimulation für Geräte erstellt, 
+               mit Thomas code für devices  angepasst,
+               Zeitsimulation angepasst mit veränderten device Dateien von Thomas
         --------------------------------------------------------------------------------------------------
-        11:00 Checkup:
-
-        --------------------------------------------------------------------------------------------------
-        12:00 Ziele für morgen definieren:
-
+        12:00 Checkup & Ziele für morgen:
+                code-review und tagesziele definieren
+                timo & kaan backend/frontend mergen, raumerstellung Thomas
+                simulationsregeln mit devices checken niki
+        
         --------------------------------------------------------------------------------------------------        
 
 _________________________________________________________________________________________________________

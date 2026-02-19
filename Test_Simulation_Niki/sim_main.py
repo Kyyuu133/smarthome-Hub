@@ -1,5 +1,5 @@
-from Niki_Test.devices import Device, SmartHomeHub       # Imprtieren aus devices (Vorher Main)
-from Niki_Test.simulator import TimeCondition, Rule, DaySimulator  # importieren aus simulator
+from Test_Simulation_Niki.sim_devices import Device, SmartHomeHub       # Imprtieren aus devices (Vorher Main)
+from Test_Simulation_Niki.simulator import TimeCondition, Rule, DaySimulator  # importieren aus simulator
 from datetime import time as dtime
 
 # 1. Geräte erstellen
@@ -21,7 +21,7 @@ hub.add_device(coffee_mashine)
 
 # 3. Regeln definieren
 regeln = [
-    Rule(TimeCondition(dtime(7, 0),  dtime(9, 0)),  light,   "on"),
+    Rule(TimeCondition(dtime(8, 0),  dtime(9, 0)),  light,   "on"),
     Rule(TimeCondition(dtime(9, 0),  dtime(18, 0)), light,   "off"),
     Rule(TimeCondition(dtime(15, 0), dtime(23, 0)), light,   "on"),
     Rule(TimeCondition(dtime(6, 0),  dtime(22, 0)), heater, "on"),
@@ -39,7 +39,7 @@ regeln = [
 ]
 
 # 4. Simulator starten
-sim = DaySimulator(speed=1.5)
+sim = DaySimulator(speed=2.0)
 for regel in regeln:
     sim.add_rule(regel)
 

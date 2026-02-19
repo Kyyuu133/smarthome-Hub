@@ -1,4 +1,6 @@
 import sqlite3
+from day_emulator import DayEmulator, default_device_callback
+from device import Device
 
 
 class Database:
@@ -91,13 +93,28 @@ class SmartHomeHub:
 if __name__ == "__main__":
 
     
-    db = Database("useres_rooms_devices.sql")
+    db = Database("hub.sql")
 
     
     hub = SmartHomeHub(db)
 
 
     hub.load_devices()
+
+    # Emulator erstellen
+    # speed = Sekunden pro simulierter Stunde (vorher einstellbar mit Float Nummern) 
+    emulator = DayEmulator(database=db, speed=1.0, start_hour=0)
+
+    # Automatischen Callback mit deinem Hub verknüpfen
+    callback = default_device_callback(hub, temp_threshold_high=22.0, temp_threshold_low=16.0)
+
+    # Tag simulieren – jede Stunde wird der Callback aufgerufen
+    emulator.simulate_day(on_hour_callback=callback)
+
+    # Nach der Simulation: Tagesprotokoll abrufen
+    log = emulator.get_log()
+    print(f"\nHours Protocol: {len(log)}")
+
 
     
     hub.list_devices()
