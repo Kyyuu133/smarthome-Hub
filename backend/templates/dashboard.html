@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Smarthome-Dashboard</title>
+    </head>
+    <body>
+        <div>
+        <h2>Dashboard</h2>
+        <br>
+        <p>Welcome {{ user["user_name"] }}</p>
+        <p>Your Role: {{ user["user_role"] }}</p>
+        <br>
+        <h3>Edit Profile</h3>
+            <!-- wir rufen update password auf, alle user haben zugriff darauf -->
+        <form action="/update_password" method="post">
+            <input type="hidden" name="target_user_id" value="{{ user['user_id'] }}">
+            <input type="hidden" name="user_name" value="{{ user['user_name'] }}">
+
+            <label>New Password:</label>
+            <input type="password" name="new_user_password" required>
+            <br><br>
+
+            <button type="submit">Change Password</button>
+        </form>
+        <br> 
+        <br>
+        <!-- admin maske nur für admin einsehbar-->
+        {% if user["user_role"] == "admin" %}   
+        
+
+        <h3>Manage Users</h3>
+        <!-- wir gehen alle user durch -->
+        {% for u in all_users %}    
+        
+        <!-- kleine box um einträge für lesbarkeit -->
+        <div style="border:1px solid black; padding:10px; margin:10px;">
+        
+        <p>{{ u["user_name"] }} ({{ u["user_role"] }})</p>
+
+        <!-- admin kann pws anderer nutzer ändern -->
+         
+        <form action="/update_password" method="post">
+            <input type="hidden" name="target_user_id" value="{{ u['user_id'] }}">
+            <input type="password" name="new_user_password" placeholder="New Password" required>
+            <button type="submit">Change Password</button>
+        </form>
+
+        <!-- admin kann rollen anderer nutzer ändern, target user id  -->
+
+        <form action="/update_role" method="post">
+            <input type="hidden" name="target_user_id" value="{{ u['user_id'] }}">
+            <input type="hidden" name="user_name" value="{{ u['user_name'] }}">
+            <select name="new_role">
+                <option value="user">User</option>
+                <option value="admin">Admin</option>
+            </select>
+            <button type="submit">Change Role</button>
+        </form>
+
+        </div>
+
+        {% endfor %}
+
+        {% endif %}
+
+        <br><br>
+        <!-- login verweist jetzt nicht mehr nur auf startseite sondern ruft /logout call auf, welcher session beendet -->
+        <a href="/logout">Logout</a>
+        </div>
+    </body>
+</html>

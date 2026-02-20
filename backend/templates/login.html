@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+    
+    <head>
+        <title>Loginpage</title>
+    </head>
+
+    <body>
+        <h2>Login</h2>
+            <!-- wir rufen den login call der user_api auf und erstellen eine form für die übergabe von variablen -->
+        <form action="/login" method="post">
+            <label>Username:</label>
+            <input type="text" name="user_name" required>
+            <br><br>
+            <label>Password:</label>
+            <input type="password" name="user_password" required>
+            <br><br>
+            <a href="/setup">Neuen Benutzer erstellen?</a>
+            <br><br>
+            <button type="submit">Login</button>
+        </form>
+    </body>
+     
+</html>
+
+<!-- variablennamen anpassen uniform
+basemodel rausnehmen -->
