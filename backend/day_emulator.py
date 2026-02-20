@@ -71,7 +71,7 @@ class DayEmulator:
     Parameter
     ----------
     database    : Database-Objekt aus main.py
-    speed       : Sekunden pro simulierter Stunde (Standard: 1 Sekunde)
+    speed       : Sekunden pro simulierter Stunde (Standard: 1 Sekunde) Kann beliebig umgestellt werden
     start_hour  : Startstunde des Tages (0–23, Standard: 0)
     """
 
@@ -188,30 +188,30 @@ def default_device_callback(hub, temp_threshold_high=22.0, temp_threshold_low=16
     def callback(hour, temperature, time_of_day):
         print(f"Automatic-Check: {temperature}°C", end="  ")
         if temperature >= temp_threshold_high:
-            print("(high ->  Heizung AUS)")
+            print("(high ->  Heater OFF)")
             for device in hub.devices:
                 if "Climate" in device.device_name.lower() or "ac" in device.device_name.lower():
                     device.turn_on()
                 if "heater" in device.device_name.lower() or "heater" in device.device_name.lower():
                     device.turn_off()
         elif temperature <= temp_threshold_low:
-            print("(niedrig → Heizung AN, Klimaanlage AUS)")
+            print("(Low → Heater ON, AC OFF)")
             for device in hub.devices:
-                if "heizung" in device.device_name.lower() or "heater" in device.device_name.lower():
+                if "hater" in device.device_name.lower() or "heater" in device.device_name.lower():
                     device.turn_on()
-                if "klima" in device.device_name.lower() or "ac" in device.device_name.lower():
+                if "climate" in device.device_name.lower() or "ac" in device.device_name.lower():
                     device.turn_off()
         else:
-            print("(normal → keine Änderung)")
+            print("(normal → No change)")
 
         # Lichter: nachts/morgens an, tagsüber aus
         if hour < 7 or hour >= 21:
             for device in hub.devices:
-                if "licht" in device.device_name.lower() or "light" in device.device_name.lower() or "lampe" in device.device_name.lower():
+                if "lights" in device.device_name.lower() or "light" in device.device_name.lower() or "lamp" in device.device_name.lower():
                     device.turn_on()
         else:
             for device in hub.devices:
-                if "licht" in device.device_name.lower() or "light" in device.device_name.lower() or "lampe" in device.device_name.lower():
+                if "lights" in device.device_name.lower() or "light" in device.device_name.lower() or "lamp" in device.device_name.lower():
                     device.turn_off()
 
     return callback
