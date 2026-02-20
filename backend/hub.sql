@@ -28,13 +28,10 @@ CREATE TABLE IF NOT EXISTS devices (
 
 
 -- -- 4. Table column name update
--- ALTER TABLE users RENAME COLUMN user_passwort TO user_password;
--- ALTER TABLE users RENAME COLUMN rolle TO user_role;
--- ALTER TABLE devices RENAME COLUMN status TO device_status;
--- ALTER TABLE sensor_data DROP COLUMN sensor_timestamp;
--- ALTER TABLE device_event_log DROP COLUMN event_time;
--- ALTER TABLE sensor_data ADD COLUMN sensor_timestamp TEXT NOT NULL DEFAULT '';
--- ALTER TABLE device_event_log ADD COLUMN event_timestamp TEXT NOT NULL DEFAULT '';
+ALTER TABLE users RENAME COLUMN user_passwort TO user_password;
+ALTER TABLE users RENAME COLUMN rolle TO user_role;
+ALTER TABLE devices RENAME COLUMN status TO device_status;
+
 
 -- -- 5. Sensor Data
 -- CREATE TABLE IF NOT EXISTS sensor_data (
