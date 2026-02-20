@@ -13,7 +13,6 @@ import os                                                       #os für dateipf
 app = FastAPI()
 
 app.add_middleware(SessionMiddleware, secret_key="SUPER_SECRET_KEY_123")
-#connect to db function
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
@@ -42,13 +41,13 @@ def get_current_user(request: Request):             # funktion um aktuellen nutz
 async def login_page(request:Request):
     
     #verbindung zur db herstellen, cursor erstellen
-    conn = sqlite3.connect("hub.db")
-    cursor = conn.cursor()
+    conn, curs = get_db()
+    curs = conn.cursor()
 
     #STARTPAGE - wir checken ob es schon user gibt, falls nicht soll der user admin erstellt werden.
     try: 
-        cursor.execute("SELECT COUNT(*) FROM users")
-        user_count = cursor.fetchone()[0]
+        curs.execute("SELECT COUNT(*) FROM users")
+        user_count = curs.fetchone()[0]
     except sqlite3.OperationalError:
         user_count = 0
     

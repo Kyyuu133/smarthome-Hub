@@ -3,9 +3,9 @@ PRAGMA foreign_keys = ON;
 -- 1. Users Tabelle
 CREATE TABLE IF NOT EXISTS users (
     user_id       INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_name     TEXT    NOT NULL UNIQUE,
-    user_passwort TEXT    NOT NULL,
-    rolle         TEXT    NOT NULL CHECK(rolle IN ('admin', 'user'))
+    user_name     TEXT    NOT NULL,
+    user_password TEXT    NOT NULL,
+    user_role     TEXT    NOT NULL CHECK(user_role IN ('admin', 'user'))
 );
 
 -- 2. Rooms Tabelle
@@ -22,15 +22,15 @@ CREATE TABLE IF NOT EXISTS devices (
     room_id     INTEGER,
     device_name TEXT    NOT NULL UNIQUE,
     device_type TEXT    NOT NULL,
-    status      BOOLEAN NOT NULL DEFAULT 0,
+    device_status      BOOLEAN NOT NULL DEFAULT 0,
     FOREIGN KEY (room_id) REFERENCES rooms(room_id)
 );
 
 
--- -- 4. Table column name update
-ALTER TABLE users RENAME COLUMN user_passwort TO user_password;
-ALTER TABLE users RENAME COLUMN rolle TO user_role;
-ALTER TABLE devices RENAME COLUMN status TO device_status;
+-- -- -- 4. Table column name update
+-- ALTER TABLE users RENAME COLUMN user_passwort TO user_password;
+-- ALTER TABLE users RENAME COLUMN rolle TO user_role;
+-- ALTER TABLE devices RENAME COLUMN status TO device_status;
 
 
 -- -- 5. Sensor Data
