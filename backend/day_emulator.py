@@ -158,9 +158,9 @@ class DayEmulator:
         self._log.append(entry)
         return entry
 
-    # ------------------------------------------------------------------
+   
     # Private helpers
-    # ------------------------------------------------------------------
+   
 
     def _print_summary(self):
         if not self._log:
@@ -172,9 +172,9 @@ class DayEmulator:
         print(f"  Average Temperature : {round(sum(temps)/len(temps), 1)}°C\n")
 
 
-# ----------------------------------------------------------------------
+
 # Beispiel-Callback – kann 1:1 in main.py genutzt werden
-# ----------------------------------------------------------------------
+
 
 def default_device_callback(hub, temp_threshold_high=22.0, temp_threshold_low=16.0):
     """
@@ -217,9 +217,9 @@ def default_device_callback(hub, temp_threshold_high=22.0, temp_threshold_low=16
     return callback
 
 
-# ----------------------------------------------------------------------
-# Standalone-Test (python day_emulator.py)
-# ----------------------------------------------------------------------
+
+# Standalone-Test für  Emulator ohne Main.py und Datenbank. über day_emulator.py aufrufbar
+
 
 if __name__ == "__main__":
     print("Standalone-Test of simulator (No databank necessary)\n")
