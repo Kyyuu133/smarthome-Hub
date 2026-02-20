@@ -71,7 +71,7 @@ class DayEmulator:
     Parameter
     ----------
     database    : Database-Objekt aus main.py
-    speed       : Sekunden pro simulierter Stunde (Standard: 1 Sekunde)
+    speed       : Sekunden pro simulierter Stunde (Standard: 1 Sekunde) Kann beliebig umgestellt werden
     start_hour  : Startstunde des Tages (0–23, Standard: 0)
     """
 
@@ -86,15 +86,15 @@ class DayEmulator:
   
 
     def get_current_temperature(self) -> float:
-        ### Gibt die aktuelle simulierte Temperatur zurück.
+        # Gibt die aktuelle simulierte Temperatur zurück.
         return self.current_temp
 
     def get_current_hour(self) -> int:
-        ### Gibt die aktuelle simulierte Stunde zurück.
+        # Gibt die aktuelle simulierte Stunde zurück.
         return self.current_hour
 
     def get_log(self) -> list[dict]:
-        ### Gibt das vollständige Tagesprotokoll zurück.
+        # Gibt das vollständige Tagesprotokoll zurück.
         return self._log
 
     def simulate_day(self, on_hour_callback=None):
@@ -158,9 +158,9 @@ class DayEmulator:
         self._log.append(entry)
         return entry
 
-    # ------------------------------------------------------------------
+   
     # Private helpers
-    # ------------------------------------------------------------------
+   
 
     def _print_summary(self):
         if not self._log:
@@ -172,9 +172,9 @@ class DayEmulator:
         print(f"  Average Temperature : {round(sum(temps)/len(temps), 1)}°C\n")
 
 
-# ----------------------------------------------------------------------
+
 # Beispiel-Callback – kann 1:1 in main.py genutzt werden
-# ----------------------------------------------------------------------
+
 
 def default_device_callback(hub, temp_threshold_high=22.0, temp_threshold_low=16.0):
     """
@@ -188,38 +188,38 @@ def default_device_callback(hub, temp_threshold_high=22.0, temp_threshold_low=16
     def callback(hour, temperature, time_of_day):
         print(f"Automatic-Check: {temperature}°C", end="  ")
         if temperature >= temp_threshold_high:
-            print("(high ->  Heizung AUS)")
+            print("(high ->  Heater OFF)")
             for device in hub.devices:
                 if "Climate" in device.device_name.lower() or "ac" in device.device_name.lower():
                     device.turn_on()
                 if "heater" in device.device_name.lower() or "heater" in device.device_name.lower():
                     device.turn_off()
         elif temperature <= temp_threshold_low:
-            print("(niedrig → Heizung AN, Klimaanlage AUS)")
+            print("(Low → Heater ON, AC OFF)")
             for device in hub.devices:
-                if "heizung" in device.device_name.lower() or "heater" in device.device_name.lower():
+                if "hater" in device.device_name.lower() or "heater" in device.device_name.lower():
                     device.turn_on()
-                if "klima" in device.device_name.lower() or "ac" in device.device_name.lower():
+                if "climate" in device.device_name.lower() or "ac" in device.device_name.lower():
                     device.turn_off()
         else:
-            print("(normal → keine Änderung)")
+            print("(normal → No change)")
 
         # Lichter: nachts/morgens an, tagsüber aus
         if hour < 7 or hour >= 21:
             for device in hub.devices:
-                if "licht" in device.device_name.lower() or "light" in device.device_name.lower() or "lampe" in device.device_name.lower():
+                if "lights" in device.device_name.lower() or "light" in device.device_name.lower() or "lamp" in device.device_name.lower():
                     device.turn_on()
         else:
             for device in hub.devices:
-                if "licht" in device.device_name.lower() or "light" in device.device_name.lower() or "lampe" in device.device_name.lower():
+                if "lights" in device.device_name.lower() or "light" in device.device_name.lower() or "lamp" in device.device_name.lower():
                     device.turn_off()
 
     return callback
 
 
-# ----------------------------------------------------------------------
-# Standalone-Test (python day_emulator.py)
-# ----------------------------------------------------------------------
+
+# Standalone-Test für  Emulator ohne Main.py und Datenbank. über day_emulator.py aufrufbar
+
 
 if __name__ == "__main__":
     print("Standalone-Test of simulator (No databank necessary)\n")
