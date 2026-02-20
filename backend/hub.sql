@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS users (
     user_id       INTEGER PRIMARY KEY AUTOINCREMENT,
     user_name     TEXT    NOT NULL,
     user_password TEXT    NOT NULL,
-    user_role         TEXT    NOT NULL CHECK(rolle IN ('admin', 'user'))
+    user_role     TEXT    NOT NULL CHECK(user_role IN ('admin', 'user'))
 );
 
 -- 2. Rooms Tabelle
