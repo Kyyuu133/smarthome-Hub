@@ -1,5 +1,5 @@
 import sqlite3
-
+from device import Device
 
 class Database:
     def __init__(self, db_path):
@@ -39,7 +39,7 @@ class SmartHomeHub:
                 device_id=row["device_id"],
                 device_name=row["device_name"],
                 device_type=row["device_type"],
-                status=row["status"],
+                device_status=row["device_status"],
                 room_id=row["room_id"],
                 database=self.database
             )

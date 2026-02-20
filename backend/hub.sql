@@ -25,3 +25,45 @@ CREATE TABLE IF NOT EXISTS devices (
     status      BOOLEAN NOT NULL DEFAULT 0,
     FOREIGN KEY (room_id) REFERENCES rooms(room_id)
 );
+
+
+-- -- 4. Table column name update
+-- ALTER TABLE users RENAME COLUMN user_passwort TO user_password;
+-- ALTER TABLE users RENAME COLUMN rolle TO user_role;
+-- ALTER TABLE devices RENAME COLUMN status TO device_status;
+-- ALTER TABLE sensor_data DROP COLUMN sensor_timestamp;
+-- ALTER TABLE device_event_log DROP COLUMN event_time;
+-- ALTER TABLE sensor_data ADD COLUMN sensor_timestamp TEXT NOT NULL DEFAULT '';
+-- ALTER TABLE device_event_log ADD COLUMN event_timestamp TEXT NOT NULL DEFAULT '';
+
+-- -- 5. Sensor Data
+-- CREATE TABLE IF NOT EXISTS sensor_data (
+--     device_id INTEGER,
+--     sensor_id INTEGER PRIMARY KEY AUTOINCREMENT,
+--     sensor_type TEXT NOT NULL CHECK(sensor_type IN ('temperature', 'brightness')),
+--     sensor_value INTEGER NOT NULL CHECK(sensor_value in ('°C', 'lux')),
+--     sensor_timestamp TEXT NOT NULL DEFAULT '',
+--     FOREIGN KEY (device_id) REFERENCES devices(device_id)
+-- );
+
+-- 6. Device event log
+CREATE TABLE IF NOT EXISTS device_event_log (
+    event_id   INTEGER PRIMARY KEY AUTOINCREMENT,
+    device_id INTEGER,
+    device_status BOOLEAN NOT NULL DEFAULT 0,
+    event_timestamp TEXT NOT NULL DEFAULT '',
+    temp_value INTEGER NOT NULL DEFAULT 0, -- °C
+    brightness_value INTEGER NOT NULL DEFAULT 0, -- lux
+    FOREIGN KEY (device_id) REFERENCES devices(device_id),
+    FOREIGN KEY (device_status) REFERENCES devices(device_status) 
+);
+
+-- 7. Automation rules
+CREATE TABLE IF NOT EXISTS automation_rules (
+    automation_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    automation_name TEXT NOT NULL,
+    automation_acitve BOOL NOT NULL DEFAULT 0, -- true = enabled, false = disabled
+    trigger_type TEXT NOT NULL CHECK(trigger_type IN('sensor', 'time')),
+    device_status BOOLEAN NOT NULL DEFAULT 0,
+    FOREIGN KEY (device_status) REFERENCES devices(device_status)
+);
