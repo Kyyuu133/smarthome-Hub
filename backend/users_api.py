@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, Form                      #fastapi für querys, request und form für calls und html
+from fastapi import APIRouter, Request, Form                      #fastapi für querys, request und form für calls und html
 from fastapi.responses import HTMLResponse, RedirectResponse    #für html responses/query konvertierung
 from fastapi.templating import Jinja2Templates                  #jinja template für einfachere query konvertierung von fastapi -> html
 from pydantic import BaseModel                                  #basemodel für variablenmasken
@@ -10,9 +10,7 @@ import os                                                       #os für dateipf
 
 
 
-app = FastAPI()
-
-app.add_middleware(SessionMiddleware, secret_key="SUPER_SECRET_KEY_123")
+router = APIRouter()
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
@@ -37,12 +35,11 @@ def get_current_user(request: Request):             # funktion um aktuellen nutz
     return user
 
 
-@app.get("/", response_class=HTMLResponse)
+@router.get("/", response_class=HTMLResponse)
 async def login_page(request:Request):
     
     #verbindung zur db herstellen, cursor erstellen
     conn, curs = get_db()
-    curs = conn.cursor()
 
     #STARTPAGE - wir checken ob es schon user gibt, falls nicht soll der user admin erstellt werden.
     try: 
@@ -61,11 +58,11 @@ async def login_page(request:Request):
     #falls user existieren wird die login.html aufgerufen mit der loginmaske
     return templates.TemplateResponse("login.html", {"request": request})
 
-@app.get("/setup", response_class=HTMLResponse)
+@router.get("/setup", response_class=HTMLResponse)
 async def setup_page(request: Request):
     return templates.TemplateResponse("setup.html", {"request": request})
 
-@app.post("/login", response_class=HTMLResponse)
+@router.post("/login", response_class=HTMLResponse)
 async def login(request: Request, user_name: str = Form(...), user_password: str = Form(...)):
     conn, curs = get_db()
 
@@ -85,7 +82,7 @@ async def login(request: Request, user_name: str = Form(...), user_password: str
 
 
 #add user post request
-@app.post("/add_user", response_class=HTMLResponse) #wir schreiben den postcall um, dass er über html referenziert werden kann
+@router.post("/add_user", response_class=HTMLResponse) #wir schreiben den postcall um, dass er über html referenziert werden kann
 async def add_user(request:Request, user_name: str = Form(...), user_password: str = Form(...)): #add user erwartet json body über pydantic, html formular schickt aber form-daten, wir passen das an
     
     #username and password check
@@ -130,7 +127,7 @@ async def add_user(request:Request, user_name: str = Form(...), user_password: s
 
 
 #role update functino and query
-@app.post("/update_role")
+@router.post("/update_role")
 async def update_user_role(request: Request, target_user_id: int = Form(...), user_name: str = Form(...), new_role: str = Form(...)):
 
     current_user = get_current_user(request)    #update role so umgeschrieben dass nur admin rollen verändern kann
@@ -167,7 +164,7 @@ async def update_user_role(request: Request, target_user_id: int = Form(...), us
 
 
 #update password function and query
-@app.post("/update_password")   #für html angepasst, if user exists check rausgenommen weil update password nur passieren kann wenn user eingeloggt ist und somit existiert
+@router.post("/update_password")   #für html angepasst, if user exists check rausgenommen weil update password nur passieren kann wenn user eingeloggt ist und somit existiert
 async def update_user_password(request: Request, target_user_id: int = Form(...), new_user_password: str = Form(...)):
     
     current_user = get_current_user(request)
@@ -194,7 +191,7 @@ async def update_user_password(request: Request, target_user_id: int = Form(...)
 
     return RedirectResponse("/dashboard", status_code=303) #zurück zum dashboard
 
-@app.get("/dashboard", response_class=HTMLResponse)
+@router.get("/dashboard", response_class=HTMLResponse)
 async def dashboard(request: Request):
     user_id = request.session.get("user_id")
 
@@ -223,7 +220,7 @@ async def dashboard(request: Request):
     })
 
 
-@app.get("/logout")             #logout funktion, session beenden
+@router.get("/logout")             #logout funktion, session beenden
 async def logout(request: Request):
     request.session.clear()
     return RedirectResponse("/", status_code=303)

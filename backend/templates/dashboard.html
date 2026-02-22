@@ -6,10 +6,12 @@
     <body>
         <div>
         <h2>Dashboard</h2>
+        <hr>
         <br>
         <p>Welcome {{ user["user_name"] }}</p>
         <p>Your Role: {{ user["user_role"] }}</p>
         <br>
+        <hr>
         <h3>Edit Profile</h3>
             <!-- wir rufen update password auf, alle user haben zugriff darauf -->
         <form action="/update_password" method="post">
@@ -27,7 +29,7 @@
         <!-- admin maske nur für admin einsehbar-->
         {% if user["user_role"] == "admin" %}   
         
-
+        <hr>
         <h3>Manage Users</h3>
         <!-- wir gehen alle user durch -->
         {% for u in all_users %}    
@@ -38,7 +40,7 @@
         <p>{{ u["user_name"] }} ({{ u["user_role"] }})</p>
 
         <!-- admin kann pws anderer nutzer ändern -->
-         
+        <hr>
         <form action="/update_password" method="post">
             <input type="hidden" name="target_user_id" value="{{ u['user_id'] }}">
             <input type="password" name="new_user_password" placeholder="New Password" required>
@@ -46,7 +48,7 @@
         </form>
 
         <!-- admin kann rollen anderer nutzer ändern, target user id  -->
-
+        <hr>
         <form action="/update_role" method="post">
             <input type="hidden" name="target_user_id" value="{{ u['user_id'] }}">
             <input type="hidden" name="user_name" value="{{ u['user_name'] }}">
@@ -62,8 +64,14 @@
         {% endfor %}
 
         {% endif %}
+        <hr>
+        <h3>Room & Device Management</h3>
+
+        <a href="/list">Manage Rooms</a>
+        <br><br>
 
         <br><br>
+        <hr>
         <!-- login verweist jetzt nicht mehr nur auf startseite sondern ruft /logout call auf, welcher session beendet -->
         <a href="/logout">Logout</a>
         </div>

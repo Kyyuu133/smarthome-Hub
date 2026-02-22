@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Rooms</title>
+</head>
+<body>
+
+<h2>Room Management</h2>
+
+<a href="/create">+ Create New Room</a>
+<br><br>
+
+{% for room in rooms %}
+<div style="border:1px solid black; padding:10px; margin:10px; width:300px;">
+
+    <h3>{{ room["room_name"] }}</h3>
+
+    <!-- alle Geräte anzeigen -->
+    <a href="/devices/list/room?room_id={{ room['room_id'] }}">
+        View Devices
+    </a>
+
+    <br><br>
+
+    <!-- Raum umbenennenung, post wird aufgerufen -->
+    <form action="/rename" method="post">
+        <input type="hidden" name="room_id" value="{{ room['room_id'] }}">
+        <input type="text" name="new_name" placeholder="New Room Name" required>
+        <button type="submit">Rename</button>
+    </form>
+
+    <br>
+
+    <!-- Raum löschen - post wird aufgerufen -->
+    <form action="/delete" method="post">
+        <input type="hidden" name="room_id" value="{{ room['room_id'] }}">
+        <button type="submit">Delete Room</button>
+    </form>
+
+</div>
+{% endfor %}
+
+<br>
+<a href="/dashboard">Back to Dashboard</a>
+
+</body>
+</html>

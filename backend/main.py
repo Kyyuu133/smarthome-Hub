@@ -1,14 +1,32 @@
 import sqlite3
 from device import Device
+from fastapi import FastAPI
+from starlette.middleware.sessions import SessionMiddleware
+from users_api import router as users_router
+from rooms_devices_api import router as rooms_router
+from database import Database
+from fastapi.responses import RedirectResponse
 
-class Database:
-    def __init__(self, db_path):
-        self.db_path = db_path
+app = FastAPI()
+app.add_middleware(SessionMiddleware, secret_key="SUPER_SECRET_KEY_123")  
+# Mount both APIs under root
 
-    def connect(self):
-        conn = sqlite3.connect(self.db_path)
-        conn.row_factory = sqlite3.Row
-        return conn
+app.include_router(users_router)
+app.include_router(rooms_router)
+
+@app.get("/")
+async def root():
+    return RedirectResponse("/users/")
+
+# class Database:
+#     def __init__(self, db_path):
+#         self.db_path = db_path
+
+#     def connect(self):
+#         conn = sqlite3.connect(self.db_path)
+#         conn.row_factory = sqlite3.Row
+#         return conn
+
 # brauch die class nicht unbedingt aber empfohlen bei wachsenden projekten  
 # Um die class zu nutzen muss man eine variable erstellen
 #in unseren fall zb db = Database("useres_rooms_devices.sql")
