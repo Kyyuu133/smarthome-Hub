@@ -1,6 +1,6 @@
 import sqlite3
-from day_emulator import DayEmulator, default_device_callback
-from device import Device
+from day_emulator_dimmable import DayEmulator, default_device_callback
+from device import Device, alarm_clock, Lamp, thermostat
 
 
 class Database:
@@ -36,15 +36,34 @@ class SmartHomeHub:
         self.devices.clear()
 
         for row in rows:
-
-            device = Device(
-                device_id=row["device_id"],
-                device_name=row["device_name"],
-                device_type=row["device_type"],
-                status=row["status"],
-                room_id=row["room_id"],
-                database=self.database
-            )
+            device_type = row["device_type"]
+                    # Die einzelnen Devices hinzugefügt, dass nur bei Lampen gedimmt werden kann 
+            if device_type == "Lamp":
+                device = Lamp(
+                    device_id=row["device_id"],
+                    device_name=row["device_name"],
+                    status=row["status"],
+                    room_id=row["room_id"],
+                    database=self.database,
+                    brightness=row["brightness"]
+                )
+            elif device_type == "alarm_clock":
+                device = alarm_clock(
+                    device_id=row["device_id"],
+                    device_name=row["device_name"],
+                    status=row["status"],
+                    room_id=row["room_id"],
+                    database=self.database
+                )
+            else:
+                device = Device(
+                    device_id=row["device_id"],
+                    device_name=row["device_name"],
+                    device_type=row["device_type"],
+                    status=row["status"],
+                    room_id=row["room_id"],
+                    database=self.database
+                )
 
             self.devices.append(device)
 

@@ -1,17 +1,14 @@
-
-
-
-
 #Eigene Datei für die Class Device und später child class
 
 class Device:
-    def __init__(self, device_id, device_name, device_type, status, room_id, database):
+    def __init__(self, device_id, device_name, device_type, status, room_id, database, brightness=None):
         self.device_id = device_id
         self.device_name = device_name
         self.device_type = device_type
         self.status = bool(status)
         self.room_id = room_id
         self.database = database
+        self.brightness = brightness # Ist standardmäßig auf NONE gesetzt wegen der anderen Geräte, die keine Brightness erlauvben
 
     def turn_on(self):
         self.status = True
@@ -23,6 +20,18 @@ class Device:
         self.status = False
         self._update_status_in_db()
         print(f"{self.device_name} turned OFF")
+
+
+    def set_brightness(self, level: int):
+        # Setzt die Helligkeit (0–100). Nur für Geräte die Helligkeit unterstützen!
+        if self.brightness is None:
+            print(f"{self.device_name} does not support brightness control")
+            return
+        self.brightness = max(0, min(100, level))
+        if self.brightness == 0:
+            self.turn_off()
+        else:
+            self.turn_on() 
 
    
     def _update_status_in_db(self):
@@ -53,16 +62,16 @@ class Device:
 
    
     def print_info(self):
-
         state = "ON" if self.status else "OFF"
+        brightness_str = f"\nBrightness: {self.brightness}%" if self.brightness is not None else ""
 
         print(f"""
         Device ID: {self.device_id}
         Name: {self.device_name}
         Type: {self.device_type}
         Room ID: {self.room_id}
-        Status: {state}
-        """)
+        Status: {state}{brightness_str} 
+        """) # Helligkeitsstatus hinzugefügt
 
 class Lamp(Device):
 
@@ -75,9 +84,10 @@ class Lamp(Device):
             device_type="Lamp",   
             status=status,
             room_id=room_id,
-            database=database
-        )
+            database=database,
+            brightness=brightness # Helligkeit nur hier hinzugefügt
 
+        )
 
 
 class alarm_clock(Device):
