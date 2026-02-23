@@ -42,7 +42,7 @@ class SmartHomeHub:
                 device = Lamp(
                     device_id=row["device_id"],
                     device_name=row["device_name"],
-                    status=row["status"],
+                    status=row["device_status"],
                     room_id=row["room_id"],
                     database=self.database,
                     brightness=row["brightness"]
@@ -51,7 +51,7 @@ class SmartHomeHub:
                 device = alarm_clock(
                     device_id=row["device_id"],
                     device_name=row["device_name"],
-                    status=row["status"],
+                    status=row["device_status"],
                     room_id=row["room_id"],
                     database=self.database
                 )
@@ -60,7 +60,7 @@ class SmartHomeHub:
                     device_id=row["device_id"],
                     device_name=row["device_name"],
                     device_type=row["device_type"],
-                    status=row["status"],
+                    status=row["device_status"],
                     room_id=row["room_id"],
                     database=self.database
                 )
