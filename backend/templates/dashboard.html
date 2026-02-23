@@ -52,11 +52,12 @@
         <form action="/update_role" method="post">
             <input type="hidden" name="target_user_id" value="{{ u['user_id'] }}">
             <input type="hidden" name="user_name" value="{{ u['user_name'] }}">
+            <button type="submit">Change Role</button>
             <select name="new_role">
                 <option value="user">User</option>
                 <option value="admin">Admin</option>
             </select>
-            <button type="submit">Change Role</button>
+            
         </form>
 
         </div>

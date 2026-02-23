@@ -11,18 +11,16 @@
 <br><br>
 
 {% for room in rooms %}
-<div style="border:1px solid black; padding:10px; margin:10px; width:300px;">
+<div style="border:1px solid black; padding:10px; margin:10px; width:350px;">
 
     <h3>{{ room["room_name"] }}</h3>
 
-    <!-- alle Geräte anzeigen -->
     <a href="/devices/list/room?room_id={{ room['room_id'] }}">
         View Devices
     </a>
 
     <br><br>
 
-    <!-- Raum umbenennenung, post wird aufgerufen -->
     <form action="/rename" method="post">
         <input type="hidden" name="room_id" value="{{ room['room_id'] }}">
         <input type="text" name="new_name" placeholder="New Room Name" required>
@@ -31,11 +29,46 @@
 
     <br>
 
-    <!-- Raum löschen - post wird aufgerufen -->
+    {% if user["user_role"] == "admin" %}
+    <!-- Admin: User zu Raum zuweisen -->
+    <form action="/assign_user" method="post">
+        <input type="hidden" name="room_id" value="{{ room['room_id'] }}">
+        <select name="user_id" required>
+            <option value="" disabled selected>-- User zuweisen --</option>
+            {% for u in all_users %}
+            <option value="{{ u['user_id'] }}">{{ u['user_name'] }} ({{ u['user_role'] }})</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Assign User</button>
+    </form>
+
+    <!-- Zugewiesene User anzeigen und entfernen -->
+    {% if room["assigned_users"] %}
+    <div style="margin-top:5px; font-size:0.9em;">
+        <b>Assigned users:</b>
+        {% for au in room["assigned_users"] %}
+        <span>{{ au["user_name"] }}</span>
+        <form action="/unassign_user" method="post" style="display:inline">
+            <input type="hidden" name="room_id" value="{{ room['room_id'] }}">
+            <input type="hidden" name="user_id" value="{{ au['user_id'] }}">
+            <button type="submit" style="font-size:0.8em;">✕</button>
+        </form>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <br>
+
     <form action="/delete" method="post">
         <input type="hidden" name="room_id" value="{{ room['room_id'] }}">
         <button type="submit">Delete Room</button>
     </form>
+    {% else %}
+    <form action="/delete" method="post">
+        <input type="hidden" name="room_id" value="{{ room['room_id'] }}">
+        <button type="submit">Delete Room</button>
+    </form>
+    {% endif %}
 
 </div>
 {% endfor %}

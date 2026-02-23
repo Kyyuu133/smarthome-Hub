@@ -11,11 +11,17 @@
     <input type="hidden" name="room_id" value="{{ room['room_id'] }}">
 
     <label>Device Name:</label>
-    <input type="text" name="device_name" required>
+    <input type="text" name="device_name" placeholder="z.B. Wohnzimmer-Lampe" required>
     <br><br>
 
     <label>Device Type:</label>
-    <input type="text" name="device_type" required>
+    <select name="device_type" required>
+        <option value="" disabled selected>-- Typ auswählen --</option>
+        <option value="Lamp">💡 Lamp</option>
+        <option value="Heater">🔥 Heater</option>
+        <option value="thermostat">🌡️ Thermostat</option>
+        <option value="alarm_clock">⏰ Alarm Clock</option>
+    </select>
     <br><br>
 
     <button type="submit">Create Device</button>
@@ -24,7 +30,7 @@
 <br>
 <a href="/devices/list/room?room_id={{ room['room_id'] }}">Back to Devices</a>
 <br>
-<a href="/rooms/list">Back to Rooms</a>
+<a href="/list">Back to Rooms</a>
 
 </body>
 </html>
