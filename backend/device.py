@@ -1,7 +1,7 @@
 # Eigene Datei für die Class Device und später child class
 
 class Device:
-    def __init__(self, device_id, device_name, device_type, device_status, room_id, database, brightness=None):
+    def __init__(self, device_id, device_name, device_type, device_status, room_id, database, brightness=0):
         self.device_id = device_id
         self.device_name = device_name
         self.device_type = device_type
@@ -22,7 +22,7 @@ class Device:
 
     def set_brightness(self, level: int):
         """Setzt die Helligkeit (0–100). Nur für Geräte mit Brightness."""
-        if self.brightness is None:
+        if self.brightness is 0:
             print(f"{self.device_name} does not support brightness control")
             return
 
