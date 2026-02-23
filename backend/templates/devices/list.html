@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Devices</title>
+</head>
+<body>
+
+<h2>Devices in {{ room["room_name"] }}</h2>
+
+<a href="/devices/add?room_id={{ room['room_id'] }}">
+    + Add New Device
+</a>
+
+<br><br>
+
+{% for device in devices %}
+<div style="border:1px solid gray; padding:10px; margin:10px; width:300px;">
+
+    <p><b>{{ device["device_name"] }}</b></p>
+    <p>Type: {{ device["device_type"] }}</p>
+    <p>Status: {{ "ON" if device["device_status"] == 1 else "OFF" }}</p>
+
+    <!-- Status Toggle -->
+    <form action="/devices/status" method="post">
+        <input type="hidden" name="device_id" value="{{ device['device_id'] }}">
+        <input type="hidden" name="room_id" value="{{ room['room_id'] }}">
+        <input type="hidden" name="device_status" value="{{ 0 if device['device_status'] == 1 else 1 }}">
+            <button type="submit">{{ 'Turn Off' if device['device_status'] == 1 else 'Turn On' }}</button>
+    </form> 
+
+    <br>
+
+    <!-- Gerät löschen -->
+    <form action="/devices/delete" method="post">
+    <input type="hidden" name="device_id" value="{{ device['device_id'] }}">
+    <input type="hidden" name="room_id" value="{{ room['room_id'] }}">
+    <button type="submit">Delete</button>
+    </form>
+
+</div>
+{% endfor %}
+
+<br>
+<a href="/list">Back to Rooms</a>
+<br>
+<a href="/dashboard">Back to Dashboard</a>
+
+</body>
+</html>
