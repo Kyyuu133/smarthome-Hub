@@ -1,5 +1,6 @@
 import sqlite3
-from device import Device
+from device import Device, alarm_clock, Lamp, thermostat
+from day_emulator_dimmable import DayEmulator, default_device_callback
 from fastapi import FastAPI
 from starlette.middleware.sessions import SessionMiddleware
 from users_api import router as users_router
@@ -8,8 +9,7 @@ from database import Database
 from fastapi.responses import RedirectResponse
 
 app = FastAPI()
-app.add_middleware(SessionMiddleware, secret_key="SUPER_SECRET_KEY_123")  
-# Mount both APIs under root
+app.add_middleware(SessionMiddleware, secret_key="SUPER_SECRET_KEY_123")
 
 app.include_router(users_router)
 app.include_router(rooms_router)
@@ -18,115 +18,76 @@ app.include_router(rooms_router)
 async def root():
     return RedirectResponse("/users/")
 
-# class Database:
-#     def __init__(self, db_path):
-#         self.db_path = db_path
-
-#     def connect(self):
-#         conn = sqlite3.connect(self.db_path)
-#         conn.row_factory = sqlite3.Row
-#         return conn
-
-# brauch die class nicht unbedingt aber empfohlen bei wachsenden projekten  
-# Um die class zu nutzen muss man eine variable erstellen
-#in unseren fall zb db = Database("useres_rooms_devices.sql")
-
-
 class SmartHomeHub:
-
     def __init__(self, database):
-
         self.database = database
         self.devices = []
 
-    # load all devices from database
     def load_devices(self):
-
         conn = self.database.connect()
         cursor = conn.cursor()
-
         cursor.execute("SELECT * FROM devices")
-
         rows = cursor.fetchall()
-
         self.devices.clear()
-
         for row in rows:
-
-            device = Device(
-                device_id=row["device_id"],
-                device_name=row["device_name"],
-                device_type=row["device_type"],
-                device_status=row["device_status"],
-                room_id=row["room_id"],
-                database=self.database
-            )
-
+            device_type = row["device_type"]
+            if device_type == "Lamp":
+                device = Lamp(
+                    device_id=row["device_id"],
+                    device_name=row["device_name"],
+                    device_status=row["device_status"],
+                    room_id=row["room_id"],
+                    database=self.database,
+                    brightness=row["brightness"]
+                )
+            elif device_type == "alarm_clock":
+                device = alarm_clock(
+                    device_id=row["device_id"],
+                    device_name=row["device_name"],
+                    device_status=row["device_status"],
+                    room_id=row["room_id"],
+                    database=self.database
+                )
+            else:
+                device = Device(
+                    device_id=row["device_id"],
+                    device_name=row["device_name"],
+                    device_type=row["device_type"],
+                    device_status=row["device_status"],   # ← DB Spalte heißt device_status
+                    room_id=row["room_id"],
+                    database=self.database
+                )
             self.devices.append(device)
-
         conn.close()
 
-    # get device object by id
     def get_device(self, device_id):
-
         for device in self.devices:
-
             if device.device_id == device_id:
                 return device
-
         return None
 
-    
     def delete_device(self, device_id):
-
         conn = self.database.connect()
         cursor = conn.cursor()
-
-        cursor.execute("""
-            DELETE FROM devices
-            WHERE device_id = ?
-        """, (device_id,))
-
+        cursor.execute("DELETE FROM devices WHERE device_id = ?", (device_id,))
         conn.commit()
         conn.close()
-
-        
-        self.devices = [
-            device for device in self.devices
-            if device.device_id != device_id
-        ]
-
+        self.devices = [d for d in self.devices if d.device_id != device_id]
         print(f"Device {device_id} deleted")
 
-    
     def list_devices(self):
-
         for device in self.devices:
             device.print_info()
 
-
-# TEST / MAIN
 if __name__ == "__main__":
-
-    
-    db = Database("useres_rooms_devices.sql")
-
-    
+    db = Database("hub.db")
     hub = SmartHomeHub(db)
-
-
     hub.load_devices()
 
-    
-    hub.list_devices()
+    emulator = DayEmulator(database=db, speed=1.0, start_hour=0)
+    callback = default_device_callback(hub, temp_threshold_high=22.0, temp_threshold_low=16.0)
+    emulator.simulate_day(on_hour_callback=callback)
 
-   
-    device = hub.get_device(1)
-
-    if device:
-        device.turn_on()
-
-   
-    hub.delete_device(2)
-
+    log = emulator.get_log()
+    print(f"\nHours Protocol: {len(log)}")
     hub.list_devices()
