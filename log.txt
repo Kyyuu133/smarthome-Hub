@@ -152,3 +152,31 @@ ________________________________________________________________________________
                 query-logik für devices anlegen und aufsetzen
                 an Kaan weitegeben wenn fertig
         --------------------------------------------------------------------------------------------------        
+
+_________________________________________________________________________________________________________
+
+Montag, 16.02.2026 (Timo):  
+_________________________________________________________________________________________________________
+        Alle: 
+
+        -  Revision 
+        -  Funktionstest interoperabilität der einzelnen Programme (API) in der Datenbank
+        -  Finale DB besprochen
+
+        --------------------------------------------------------------------------------------------------
+        Nachmittag:
+        --------------------------------------------------------------------------------------------------
+        Timo: 
+                Status-Queries anlegen für Statusabfrage des Device Log  
+                
+        Niki:   
+                Simulation data in device_event_log schreiben
+        Thomas: 
+                README vorbereiten
+        Kaan:
+                admin raumzuweisung an user,
+                nur voreingestellte geräte können ausgewählt werden bei raumerstellung,
+                geräte können benannt werden z.B.: Wohnzimmer-Lampe       
+
+_________________________________________________________________________________________________________
+
