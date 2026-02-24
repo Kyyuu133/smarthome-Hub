@@ -2,22 +2,17 @@ import sqlite3
 from device import Device, alarm_clock, Lamp, thermostat
 from day_emulator_dimmable import DayEmulator, default_device_callback
 from fastapi import FastAPI
-from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
 from users_api import router as users_router
 from rooms_devices_api import router as rooms_router
 from database import Database
 from fastapi.responses import RedirectResponse
-from status_api import router as status_router
 
 app = FastAPI()
 app.add_middleware(SessionMiddleware, secret_key="SUPER_SECRET_KEY_123")
 
 app.include_router(users_router)
 app.include_router(rooms_router)
-app.include_router(status_router)
-
-templates = Jinja2Templates(directory="templates")
 
 @app.get("/")
 async def root():
@@ -94,5 +89,22 @@ if __name__ == "__main__":
     emulator.simulate_day(on_hour_callback=callback)
 
     log = emulator.get_log()
-    print(f"\nHours Protocol: {len(log)}")
-    hub.list_devices()
+    
+    # Speichert Log von Helligkeit, Status und Temperatur direkt in den device_event_log
+    conn = db.connect()
+    cursor = conn.cursor()
+    for entry in log:
+        for device in hub.devices:
+         cursor.execute("""
+            INSERT INTO device_event_log 
+                (device_id, device_status, event_timestamp, temp_value, brightness_value)
+            VALUES (?, ?, ?, ?, ?)
+        """, (
+            device.device_id,
+            int(device.device_status),
+            f"2025-01-01 {entry['hour']:02d}:00:00",
+            int(entry['temperature']),
+            entry['brightness']
+        ))
+    conn.commit()
+    conn.close()
