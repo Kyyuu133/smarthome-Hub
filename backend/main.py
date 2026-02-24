@@ -1,24 +1,17 @@
-import sqlite3
-from device import Device, alarm_clock, Lamp, thermostat
+from device import Device, alarm_clock, Lamp
 from day_emulator_dimmable import DayEmulator, default_device_callback
 from fastapi import FastAPI
-from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
 from users_api import router as users_router
 from rooms_devices_api import router as rooms_router
 from database import Database
 from fastapi.responses import RedirectResponse
-from status_api import router as status_router
 from datetime import datetime
-
 app = FastAPI()
 app.add_middleware(SessionMiddleware, secret_key="SUPER_SECRET_KEY_123")
 
 app.include_router(users_router)
 app.include_router(rooms_router)
-app.include_router(status_router)
-
-templates = Jinja2Templates(directory="templates")
 
 @app.get("/")
 async def root():
@@ -43,8 +36,8 @@ class SmartHomeHub:
                     device_name=row["device_name"],
                     device_status=row["device_status"],
                     room_id=row["room_id"],
-                    database=self.database,
-                    brightness=row["brightness"]
+                    database=self.database#,
+                    #brightness=row["brightness"]
                 )
             elif device_type == "alarm_clock":
                 device = alarm_clock(
@@ -96,13 +89,10 @@ if __name__ == "__main__":
 
     log = emulator.get_log()
     
-    # Speichert Log von Helligkeit, Status und Temperatur direkt in den device_event_log
     today = datetime.now().strftime("%Y-%m-%d")
-    # Holt sich das aktuelle Datum
-    
+    # Speichert Log von Helligkeit, Status und Temperatur direkt in den device_event_log
     conn = db.connect()
     cursor = conn.cursor()
-    
     for entry in log:
         for device in hub.devices:
          cursor.execute("""
@@ -114,7 +104,7 @@ if __name__ == "__main__":
             int(device.device_status),
             f"{today} {entry['hour']:02d}:00:00",
             int(entry['temperature']),
-            int(entry['brightness'])
+            entry['brightness']
         ))
     conn.commit()
     conn.close()

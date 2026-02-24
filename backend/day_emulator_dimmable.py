@@ -238,7 +238,7 @@ class DayEmulator:
 
 
 # Beispiel-Callback – kann 1:1 in main.py genutzt werden
-
+''''MORGEN ENDPUNKTE FERTIG machen für Treshhold-Endpunkt '''
 
 def default_device_callback(hub, temp_threshold_high=22.0, temp_threshold_low=16.0):
     """

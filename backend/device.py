@@ -42,10 +42,6 @@ class Device:
             SET device_status = ?
             WHERE device_id = ?
         """, (int(self.device_status), self.device_id))
-        cursor.execute("""
-            INSERT INTO device_event_log (event_id, device_id, device_status)    
-            SET device_status = ?
-        """, (int(self.device_status))
 
         conn.commit()
         conn.close()
@@ -61,8 +57,8 @@ class Device:
         """, (self.device_name, self.device_type, int(self.device_status), self.room_id))
         cursor.execute("""
             INSERT INTO device_event_log (event_log, device_id, device_status)
-            VALUES (?, ?)
-        """,
+            VALUES (, ?, ?)
+        """, 
             (self.device_id, int(self.device_status))
         )
 
