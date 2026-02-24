@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Last Event per Device</title>
+</head>
+<body>
+
+<h2>🔌 Last Event per Device</h2>
+
+{% if events %}
+<table border="1" cellpadding="8" cellspacing="0">
+    <thead>
+        <tr>
+            <th>Device ID</th>
+            <th>Status</th>
+            <th>Temp (°C)</th>
+            <th>Brightness (lux)</th>
+            <th>Timestamp</th>
+            <th>History</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for e in events %}
+        <tr>
+            <td>{{ e["device_id"] }}</td>
+            <td>{{ "ON" if e["device_status"] else "OFF" }}</td>
+            <td>{{ e["temp_value"] }}</td>
+            <td>{{ e["brightness_value"] }}</td>
+            <td>{{ e["event_timestamp"] }}</td>
+            <td><a href="/status/events/device/history/{{ e['device_id'] }}">View History</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No events found.</p>
+{% endif %}
+
+<br>
+<a href="/status/events">Back to Overview</a>
+&nbsp;|&nbsp;
+<a href="/list">Back to Rooms</a>
+
+</body>
+</html>

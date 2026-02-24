@@ -2,7 +2,6 @@ from fastapi import APIRouter, Request, Form, Response
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
-from login import username_check, password_check
 from typing import Optional
 from starlette.middleware.sessions import SessionMiddleware
 import sqlite3
@@ -12,54 +11,55 @@ from rooms import Room
 from database import Database
 from rooms_devices_api import current_room
 
-router = APIRouter()
+router = APIRouter(prefix="/status", tags=["status"])
 
-# Basisverzeichnis und Jinja2 Templates initialisieren
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
+templates = Jinja2Templates(directory="templates")
 
-# Datenbank-Wrapper initialisieren (Pfad zur SQLite DB)
-db_path = os.path.join(BASE_DIR, "hub.db")
+db_path = "hub.db"
 db = Database(db_path)
 
 
-@router.get("/status/events", response_class=HTMLResponse)
+@router.get("/events", response_class=HTMLResponse)
 async def get_status(request: Request):
     """
     Übersicht: prüft, ob Event-Einträge existieren.
-    - Wenn keine Events vorhanden sind: Redirect zur Geräte-Anlage.
+    - Wenn keine Events vorhanden sind: Redirect zur Raumliste.
     - Sonst: rendert die Übersichtsvorlage.
     """
-    # Verbindung zur DB holen (get_db liefert conn, cursor)
+    print(f"[DEBUG] Route /status/events wurde aufgerufen")
+    
     conn, curs = get_db()
     try:
-        # Anzahl aller Einträge in device_event_log abfragen
         curs.execute("SELECT COUNT(*) FROM device_event_log")
         event_count = curs.fetchone()[0]
-    except sqlite3.OperationalError:
-        # Bei fehlender Tabelle o.ä. -> 0 Events annehmen
+        print(f"[DEBUG] Event count: {event_count}")
+    except sqlite3.OperationalError as e:
+        print(f"[DEBUG] SQL Error: {e}")
         event_count = 0
     finally:
-        # Verbindung immer schließen, egal ob Fehler auftrat
         conn.close()
 
     if event_count == 0:
-        # 303 See Other -> Weiterleitung zur Geräte-Add-Seite
-        return RedirectResponse("/devices/add.html", status_code=303)
-    # Template rendern, wenn Events existieren
-    return templates.TemplateResponse("status/events/overview.html", {"request": request})
+        print("[DEBUG] Keine Events, Redirect zu /list")
+        # Redirect zur Raumliste (keine Parameter nötig)
+        return RedirectResponse("/list", status_code=303)
+    
+    print("[DEBUG] Rendering template: status/events/overview.html")
+    return templates.TemplateResponse(
+        "status/events/overview.html", 
+        {"request": request}
+    )
 
 
-@router.get("/status/events/all_devices", response_class=HTMLResponse)
+@router.get("/events/all_devices", response_class=HTMLResponse)
 async def get_all_devices(request: Request):
     """
     Liefert jeweils das letzte Event für jede vorhandene device_id.
-    - Query nutzt eine korrelierte Subquery, um das MAX(event_id) je device zu finden.
-    - Ergebnis ist eine Liste mit einem Eintrag pro Gerät (letztes Event).
     """
+    print(f"[DEBUG] Route /status/events/all_devices wurde aufgerufen")
+    
     conn, curs = get_db()
     try:
-        # Letztes Event pro device_id selektieren (korrelierte Subquery)
         curs.execute("""
             SELECT *
             FROM device_event_log d
@@ -68,80 +68,97 @@ async def get_all_devices(request: Request):
             )
             ORDER BY device_id
         """)
-        # Alle gefundenen Reihen abholen
         events = curs.fetchall()
-    except sqlite3.OperationalError:
-        # Falls Tabelle fehlt o.ä. -> leere Liste zurückgeben
+        print(f"[DEBUG] {len(events)} Events gefunden")
+    except sqlite3.OperationalError as e:
+        print(f"[DEBUG] SQL Error: {e}")
         events = []
     finally:
-        # DB-Verbindung schließen
         conn.close()
 
     if not events:
-        # Wenn keine Events gefunden wurden -> Redirect zur Geräte-Anlage
-        return RedirectResponse("/devices/add.html", status_code=303)
-    # Template rendern mit den gefundenen Events
-    return templates.TemplateResponse("status/all/devices.html", {"request": request, "events": events})
+        return RedirectResponse("/list", status_code=303)
+    
+    return templates.TemplateResponse(
+        "status/all/devices.html", 
+        {"request": request, "events": events}
+    )
 
 
-@router.get("/status/events/room", response_class=HTMLResponse)
+@router.get("/events/room", response_class=HTMLResponse)
 async def get_room_events(request: Request):
     """
     Liefert Events für Geräte, die einem bestimmten Raum zugeordnet sind.
-    - current_room() liefert die aktive Raum-ID.
-    - Hier werden alle Events der Geräte im Raum zurückgegeben, absteigend nach event_id.
     """
-    # Verbindung und Cursor holen
+    print(f"[DEBUG] Route /status/events/room wurde aufgerufen")
+    
     conn, curs = get_db()
-    # Raum-ID aus rooms_devices_api (falls None, Query liefert keine Geräte)
-    room = current_room()
+    room = current_room(request)
+    
+    if not room:
+        print("[DEBUG] Kein Raum ausgewählt")
+        return RedirectResponse("/list", status_code=303)
+    
+    print(f"[DEBUG] Raum ID: {room['room_id']}")
+    
     try:
-        # Alle Events für Geräte in diesem Raum, sortiert nach neustem Event zuerst
         curs.execute(
             "SELECT * FROM device_event_log "
-            "WHERE device_id IN (SELECT device_id FROM rooms WHERE room_id = ?) "
+            "WHERE device_id IN (SELECT device_id FROM devices WHERE room_id = ?) "
             "ORDER BY event_id DESC",
-            (room,)
+            (room["room_id"],)
         )
-        # Ergebnisse holen
         events = curs.fetchall()
-    except sqlite3.OperationalError:
-        # Bei Fehlern (z. B. fehlende Tabellen) -> leere Liste
+        print(f"[DEBUG] {len(events)} Events für Raum {room['room_id']} gefunden")
+    except sqlite3.OperationalError as e:
+        print(f"[DEBUG] SQL Error: {e}")
         events = []
     finally:
-        # Verbindung immer schließen
         conn.close()
 
     if not events:
-        # Keine Events -> Redirect zur Geräte-Anlage
-        return RedirectResponse("/devices/add.html", status_code=303)
-    # Template mit den Raum-Events rendern
-    return templates.TemplateResponse("status/events/room.html", {"request": request, "events": events})
+        return RedirectResponse("/list", status_code=303)
+    
+    return templates.TemplateResponse(
+        "status/events/room.html", 
+        {"request": request, "events": events}
+    )
 
 
-@router.get("/status/events/history", response_class=HTMLResponse)
+@router.get("/events/history", response_class=HTMLResponse)
 async def get_events_history(request: Request):
-    # Allgemeine Ereignishistorie (neueste zuerst)
+    """
+    Allgemeine Ereignishistorie (neueste zuerst)
+    """
+    print(f"[DEBUG] Route /status/events/history wurde aufgerufen")
+    
     conn, curs = get_db()
     try:
         curs.execute("SELECT * FROM device_event_log ORDER BY event_id DESC")
         events = curs.fetchall()
-    except sqlite3.OperationalError:
-        # Falls Tabelle fehlt oder andere DB-Fehler -> leere Liste
+        print(f"[DEBUG] {len(events)} Events in der History gefunden")
+    except sqlite3.OperationalError as e:
+        print(f"[DEBUG] SQL Error: {e}")
         events = []
     finally:
         conn.close()
 
     if not events:
-        # Wenn keine Events vorhanden -> Redirect zur Geräte-Anlage
-        return RedirectResponse("/devices/add.html", status_code=303)
-    # Template mit allen Events rendern
-    return templates.TemplateResponse("status/events/history.html", {"request": request, "events": events})
+        return RedirectResponse("/list", status_code=303)
+    
+    return templates.TemplateResponse(
+        "status/events/history.html", 
+        {"request": request, "events": events}
+    )
 
 
-@router.get("/status/events/device/history/{device_id}", response_class=HTMLResponse)
+@router.get("/events/device/history/{device_id}", response_class=HTMLResponse)
 async def get_device_history(request: Request, device_id: int):
-    # Ereignishistorie für ein einzelnes Gerät (nach device_id)
+    """
+    Ereignishistorie für ein einzelnes Gerät (nach device_id)
+    """
+    print(f"[DEBUG] Route /status/events/device/history/{device_id} wurde aufgerufen")
+    
     conn, curs = get_db()
     try:
         curs.execute(
@@ -149,15 +166,17 @@ async def get_device_history(request: Request, device_id: int):
             (device_id,)
         )
         events = curs.fetchall()
-    except sqlite3.OperationalError:
-        # Bei Fehlern -> leere Ergebnisliste
+        print(f"[DEBUG] {len(events)} Events für Device {device_id} gefunden")
+    except sqlite3.OperationalError as e:
+        print(f"[DEBUG] SQL Error: {e}")
         events = []
     finally:
-        # Verbindung schließen
         conn.close()
 
     if not events:
-        # Keine Events für dieses Gerät -> Redirect
-        return RedirectResponse("/devices/add.html", status_code=303)
-    # Template für Geräteeinträge rendern, device_id zur Anzeige mitgeben
-    return templates.TemplateResponse("status/events/device_history.html", {"request": request, "events": events, "device_id": device_id})
+        return RedirectResponse("/list", status_code=303)
+    
+    return templates.TemplateResponse(
+        "status/events/device_history.html", 
+        {"request": request, "events": events, "device_id": device_id}
+    )
