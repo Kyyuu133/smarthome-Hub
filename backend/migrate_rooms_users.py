@@ -11,6 +11,9 @@ curs.execute("""
     CREATE TABLE IF NOT EXISTS room_users (
         room_id INTEGER NOT NULL,
         user_id INTEGER NOT NULL,
+        room_name TEXT,
+        user_name TEXT,
+        user_role TEXT,
         PRIMARY KEY (room_id, user_id),
         FOREIGN KEY (room_id) REFERENCES rooms(room_id) ON DELETE CASCADE,
         FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
@@ -19,4 +22,5 @@ curs.execute("""
 
 conn.commit()
 conn.close()
-print("Migration abgeschlossen: room_users Tabelle erstellt.")
+
+#user_name, user_role, room_name geadded in room_users geadded

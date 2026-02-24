@@ -119,3 +119,4 @@ class Heater(Device):
             room_id=room_id,
             database=database
         )
+        
