@@ -22,7 +22,7 @@ class Device:
 
     def set_brightness(self, level: int):
         """Setzt die Helligkeit (0–100). Nur für Geräte mit Brightness."""
-        if self.brightness is 0:
+        if self.brightness == 0:
             print(f"{self.device_name} does not support brightness control")
             return
 
@@ -108,3 +108,15 @@ class thermostat(Device):
             room_id=room_id,
             database=database
         )
+
+class Heater(Device):
+    def __init__(self, device_id, device_name, device_status, room_id, database):
+        super().__init__(
+            device_id=device_id,
+            device_name=device_name,
+            device_type="Heater",
+            device_status=device_status,
+            room_id=room_id,
+            database=database
+        )
+        
