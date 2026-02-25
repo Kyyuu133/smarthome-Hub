@@ -1,6 +1,6 @@
 import sqlite3
 from device import Device, alarm_clock, Lamp, thermostat
-from day_emulator_dimmable import DayEmulator, default_device_callback
+from emulator import DayEmulator, default_device_callback
 from fastapi import FastAPI
 from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
@@ -34,6 +34,8 @@ class SmartHomeHub:
         cursor.execute("SELECT * FROM devices")
         rows = cursor.fetchall()
         self.devices.clear()
+       
+       
         for row in rows:
             device_type = row["device_type"]
             if device_type == "Lamp":
@@ -90,7 +92,7 @@ if __name__ == "__main__":
     hub.load_devices()
 
     emulator = DayEmulator(database=db, speed=1.0, start_hour=0)
-    callback = default_device_callback(hub, temp_threshold_high=22.0, temp_threshold_low=16.0)
+    callback = default_device_callback(hub)
     emulator.simulate_day(on_hour_callback=callback)
 
     log = emulator.get_log()
