@@ -6,7 +6,6 @@ class Device:
         self.device_status = bool(device_status)
         self.room_id = room_id
         self.database = database
-        
 
     def turn_on(self):
         self.device_status = True
@@ -17,8 +16,6 @@ class Device:
         self.device_status = False
         self._update_status_in_db()
         print(f"{self.device_name} turned OFF")
-
-    
 
     def _update_status_in_db(self):
         conn = self.database.connect()
@@ -38,24 +35,38 @@ class Device:
         conn = self.database.connect()
         cursor = conn.cursor()
 
+        # Device speichern
         cursor.execute("""
             INSERT INTO devices (device_name, device_type, device_status, room_id)
             VALUES (?, ?, ?, ?)
         """, (self.device_name, self.device_type, int(self.device_status), self.room_id))
+
+        # device_id setzen (falls AUTOINCREMENT)
+        self.device_id = cursor.lastrowid
+
+        # Event Log korrekt eintragen
         cursor.execute("""
-            INSERT INTO device_event_log (event_log, device_id, device_status)
-            VALUES (, ?, ?)
-        """, 
-            (self.device_id, int(self.device_status))
-        )
+            INSERT INTO device_event_log
+            (device_id, device_name, device_type, device_status, event_timestamp)
+            VALUES (?, ?, ?, ?, datetime('now'))
+        """, (
+            self.device_id,
+            self.device_name,
+            self.device_type,
+            int(self.device_status)
+        ))
 
         conn.commit()
         conn.close()
+
         print(f"{self.device_name} saved to DB")
 
     def print_info(self):
         state = "ON" if self.device_status else "OFF"
-        brightness_str = f"\nBrightness: {self.brightness}%" if self.brightness is not None else ""
+
+        brightness_str = ""
+        if hasattr(self, "brightness"):
+            brightness_str = f"\nBrightness: {self.brightness}%"
 
         print(f"""
         Device ID: {self.device_id}
@@ -74,16 +85,12 @@ class Lamp(Device):
             device_type="Lamp",
             device_status=device_status,
             room_id=room_id,
-            database=database,
-            brightness=brightness
-            )
-        
-    def set_brightness(self, level: int):
-        """Setzt die Helligkeit (0–100). Nur für Geräte mit Brightness."""
-        if self.brightness == 0:
-            print(f"{self.device_name} does not support brightness control")
-            return
+            database=database
+        )
+        self.brightness = brightness
 
+    def set_brightness(self, level: int):
+        """Setzt die Helligkeit (0–100)."""
         self.brightness = max(0, min(100, level))
 
         if self.brightness == 0:
@@ -104,8 +111,6 @@ class alarm_clock(Device):
         )
 
 
-
-
 class Heater(Device):
     def __init__(self, device_id, device_name, device_status, room_id, database):
         super().__init__(
@@ -116,7 +121,7 @@ class Heater(Device):
             room_id=room_id,
             database=database
         )
-        
+
     def check_temperature(self, current_temperature: float):
         """
         Schaltet den Heater automatisch:
