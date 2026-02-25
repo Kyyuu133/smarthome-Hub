@@ -1,14 +1,12 @@
-# Eigene Datei für die Class Device und später child class
-
 class Device:
-    def __init__(self, device_id, device_name, device_type, device_status, room_id, database, brightness=0):
+    def __init__(self, device_id, device_name, device_type, device_status, room_id, database):
         self.device_id = device_id
         self.device_name = device_name
         self.device_type = device_type
         self.device_status = bool(device_status)
         self.room_id = room_id
         self.database = database
-        self.brightness = brightness  # None für Geräte ohne Helligkeit
+        
 
     def turn_on(self):
         self.device_status = True
@@ -20,18 +18,7 @@ class Device:
         self._update_status_in_db()
         print(f"{self.device_name} turned OFF")
 
-    def set_brightness(self, level: int):
-        """Setzt die Helligkeit (0–100). Nur für Geräte mit Brightness."""
-        if self.brightness == 0:
-            print(f"{self.device_name} does not support brightness control")
-            return
-
-        self.brightness = max(0, min(100, level))
-
-        if self.brightness == 0:
-            self.turn_off()
-        else:
-            self.turn_on()
+    
 
     def _update_status_in_db(self):
         conn = self.database.connect()
@@ -89,7 +76,20 @@ class Lamp(Device):
             room_id=room_id,
             database=database,
             brightness=brightness
-        )
+            )
+        
+    def set_brightness(self, level: int):
+        """Setzt die Helligkeit (0–100). Nur für Geräte mit Brightness."""
+        if self.brightness == 0:
+            print(f"{self.device_name} does not support brightness control")
+            return
+
+        self.brightness = max(0, min(100, level))
+
+        if self.brightness == 0:
+            self.turn_off()
+        else:
+            self.turn_on()
 
 
 class alarm_clock(Device):
@@ -104,16 +104,7 @@ class alarm_clock(Device):
         )
 
 
-class thermostat(Device):
-    def __init__(self, device_id, device_name, device_status, room_id, database):
-        super().__init__(
-            device_id=device_id,
-            device_name=device_name,
-            device_type="thermostat",
-            device_status=device_status,
-            room_id=room_id,
-            database=database
-        )
+
 
 class Heater(Device):
     def __init__(self, device_id, device_name, device_status, room_id, database):
@@ -126,3 +117,18 @@ class Heater(Device):
             database=database
         )
         
+    def check_temperature(self, current_temperature: float):
+        """
+        Schaltet den Heater automatisch:
+        - EIN bei <= 8°C
+        - AUS bei >= 20°C
+        """
+        if current_temperature <= 8:
+            if not self.device_status:
+                print(f"{self.device_name}: {current_temperature}°C → Heater ON")
+                self.turn_on()
+
+        elif current_temperature >= 20:
+            if self.device_status:
+                print(f"{self.device_name}: {current_temperature}°C → Heater OFF")
+                self.turn_off()
