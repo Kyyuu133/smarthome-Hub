@@ -37,7 +37,7 @@
             <td>{{ e["event_id"] }}</td>
             <td>{{ e["device_id"] }}</td>
             <td>{{ e["device_name"] }}</td>
-            <td>{{ e["device_status"] }}</td>
+            <td>{{ "✅" if e["device_status"] else "❌" }}</td>
             <td>{{ e["temp_value"] }}</td>
             <td>{{ e["brightness_value"] }}</td>
             <td>{{ e["event_timestamp"] }}</td>
