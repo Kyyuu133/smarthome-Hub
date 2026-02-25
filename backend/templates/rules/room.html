@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Rules for {{ room["room_name"] }}</title>
+    
+</head>
+<body>
+    <h1>📋 Rules for Room</h1>
+    
+    <div class="room-info">
+        <h2>{{ room["room_name"] }}</h2>
+        <p><strong>Room ID:</strong> {{ room["room_id"] }}</p>
+    </div>
+    
+    <hr>
+    
+    <h2>Rules in this Room ({{ rules|length }})</h2>
+    
+    {% if rules %}
+        {% for rule in rules %}
+        <div class="rule-card">
+            <h3>Rule #{{ rule["rules_id"] }} - {{ rule["device_name"] or "Device " + rule["device_id"]|string }}</h3>
+            
+            <div class="rule-details">
+                <div class="rule-detail">
+                    <label>🌡️ Temperature High:</label>
+                    <value>{{ rule["temp_treshold_high"] if rule["temp_treshold_high"] else "Not set" }}</value>
+                </div>
+                
+                <div class="rule-detail">
+                    <label>❄️ Temperature Low:</label>
+                    <value>{{ rule["temp_treshold_low"] if rule["temp_treshold_low"] else "Not set" }}</value>
+                </div>
+                
+                <div class="rule-detail">
+                    <label>💡 Brightness High:</label>
+                    <value>{{ rule["brightness_treshold_high"] if rule["brightness_treshold_high"] else "Not set" }}</value>
+                </div>
+                
+                <div class="rule-detail">
+                    <label>🌙 Brightness Low:</label>
+                    <value>{{ rule["brightness_treshold_low"] if rule["brightness_treshold_low"] else "Not set" }}</value>
+                </div>
+            </div>
+            
+            <div class="actions">
+                <a href="/rules/device/{{ rule['device_id'] }}" class="btn btn-view">View Device Rules</a>
+                <a href="/rules/edit/{{ rule['rules_id'] }}" class="btn btn-edit">Edit</a>
+                <form action="/rules/delete/{{ rule['rules_id'] }}" method="post" style="display: inline;"
+                      onsubmit="return confirm('Delete this rule?');">
+                    <button type="submit" class="btn btn-delete">Delete</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+    <div class="no-rules">
+        <h3>No Rules in This Room</h3>
+        <p>This room doesn't have any device rules yet.</p>
+        <p>Go to a device to create automation rules.</p>
+    </div>
+    {% endif %}
+    
+    <hr>
+    <a href="/devices/list/room?room_id={{ room['room_id'] }}" class="back-link">← Back to Room Devices</a>
+    <a href="/list" class="back-link">All Rooms</a>
+    <a href="/dashboard" class="back-link">Dashboard</a>
+</body>
+</html>

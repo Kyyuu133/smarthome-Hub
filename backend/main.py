@@ -1,6 +1,6 @@
 import sqlite3
-from device import Device, alarm_clock, Lamp, thermostat
-from day_emulator_dimmable import DayEmulator, default_device_callback
+from device import Device, alarm_clock, Lamp
+from emulator import DayEmulator, default_device_callback
 from fastapi import FastAPI
 from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
@@ -9,13 +9,16 @@ from rooms_devices_api import router as rooms_router
 from database import Database
 from fastapi.responses import RedirectResponse
 from status_api import router as status_router
+from rules_api import router as rules_router
 from datetime import datetime
+
 app = FastAPI()
 app.add_middleware(SessionMiddleware, secret_key="SUPER_SECRET_KEY_123")
 
 app.include_router(users_router)
 app.include_router(rooms_router)
 app.include_router(status_router)
+app.include_router(rules_router)
 
 templates = Jinja2Templates(directory="templates")
 
@@ -90,7 +93,7 @@ if __name__ == "__main__":
     hub.load_devices()
 
     emulator = DayEmulator(database=db, speed=1.0, start_hour=0)
-    callback = default_device_callback(hub, temp_threshold_high=22.0, temp_threshold_low=16.0)
+    callback = default_device_callback(hub)
     emulator.simulate_day(on_hour_callback=callback)
 
     log = emulator.get_log()
@@ -103,15 +106,17 @@ if __name__ == "__main__":
         for device in hub.devices:
          cursor.execute("""
             INSERT INTO device_event_log 
-                (device_id, device_status, event_timestamp, temp_value, brightness_value, device_name)
-            VALUES (?, ?, ?, ?, ?, ?)
+                (device_id, device_status, device_type,event_timestamp, temp_value, brightness_value, device_name)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
         """, (
             device.device_id,
             int(device.device_status),
+            device.device_type,
             f"{today} {entry['hour']:02d}:00:00",
             int(entry['temperature']),
             entry['brightness'],
             device.device_name 
         ))
+         
     conn.commit()
     conn.close()

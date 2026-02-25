@@ -28,6 +28,23 @@
             <button type="submit">{{ 'Turn Off' if device['device_status'] == 1 else 'Turn On' }}</button>
     </form> 
 
+    <h4>{{ device["device_name"] }}</h4>
+    <p>Type: {{ device["device_type"] }}</p>
+    <p>Status: {{ device["device_status"] }}</p>
+
+    <hr>
+
+    <!-- 🔧 Rules Section -->
+    <a href="/rules/device/{{ device['device_id'] }}">
+        📋 View Rules
+    </a>
+
+    <br><br>
+
+    <a href="/rules/create/{{ device['device_id'] }}">
+        ➕ Create Rule
+    </a>
+
     <br>
 
     <!-- Gerät löschen -->
