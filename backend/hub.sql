@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS devices (
 -- ALTER TABLE users RENAME COLUMN user_passwort TO user_password;
 -- ALTER TABLE users RENAME COLUMN rolle TO user_role;
 -- ALTER TABLE devices RENAME COLUMN status TO device_status;
--- 
+ALTER TABLE device_event_log ADD COLUMN device_name TEXT NOT NULL;
 
 
 -- -- 5. Sensor Data
