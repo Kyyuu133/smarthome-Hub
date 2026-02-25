@@ -262,12 +262,12 @@ def default_device_callback(hub):
         for device in devices:
             if device.device_type != "Heater":
                 continue
-            if temperature >= rule["temp_treshold_high"]:
+            if temperature >= temp_high:
                 device.turn_off()
-                print(f"  [TEMP] {device.device_name} OFF  (>{rule['temp_treshold_high']}°C)")
-            elif temperature <= rule["temp_treshold_low"]:
+                print(f"  [TEMP] {device.device_name} OFF  (>{temp_high}°C)")
+            elif temperature <= temp_low:
                 device.turn_on()
-                print(f"  [TEMP] {device.device_name} ON   (<{rule['temp_treshold_low']}°C)")
+                print(f"  [TEMP] {device.device_name} ON   (<{temp_low}°C)")
             else:
                 print(f"  [TEMP] {device.device_name} unchanged  ({temperature}°C)")
 
@@ -279,14 +279,14 @@ def default_device_callback(hub):
         for device in devices:
             if device.device_type != "Lamp":
                 continue
-            if brightness >= rule["brightness_treshold_high"]:
+            if brightness >= brightness_threshold:
                 device.turn_on()
                 if hasattr(device, "set_brightness"):
                     device.set_brightness(brightness)
                 print(f"  [LAMP] {device.device_name} ON  @ {brightness}%")
             else:
                 device.turn_off()
-                print(f"  [LAMP] {device.device_name} OFF  (unter Threshold {rule['brightness_treshold_high']}%)")
+                print(f"  [LAMP] {device.device_name} OFF  (unter Threshold {brightness_threshold}%)")
 
     def callback(hour, temperature, time_of_day, brightness=0):
         rules = load_rules()
@@ -298,7 +298,7 @@ def default_device_callback(hub):
 
 
 
-# Standalone-Test für  Emulator ohne Main.py und Datenbank. über day_emulator.py aufrufbar
+# Standalone-Test für  Emulator ohne Main.py und Datenbank. über emulator.py aufrufbar
 
 
 if __name__ == "__main__":

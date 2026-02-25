@@ -15,7 +15,7 @@ app.add_middleware(SessionMiddleware, secret_key="SUPER_SECRET_KEY_123")
 
 app.include_router(users_router)
 app.include_router(rooms_router)
-app.include_router(status_router),
+app.include_router(status_router)
 
 templates = Jinja2Templates(directory="templates")
 
@@ -86,7 +86,7 @@ class SmartHomeHub:
         for device in self.devices:
             device.print_info()
 
-if __name__ == "__main__":
+def run_simulation():
     db = Database("hub.db")
     hub = SmartHomeHub(db)
     hub.load_devices()
@@ -96,24 +96,41 @@ if __name__ == "__main__":
     emulator.simulate_day(on_hour_callback=callback)
 
     log = emulator.get_log()
-    
     today = datetime.now().strftime("%Y-%m-%d")
-    # Speichert Log von Helligkeit, Status und Temperatur direkt in den device_event_log
+
     conn = db.connect()
     cursor = conn.cursor()
+
     for entry in log:
         for device in hub.devices:
-         cursor.execute("""
-            INSERT INTO device_event_log 
-                (device_id, device_status, event_timestamp, temp_value, brightness_value, device_name)
-            VALUES (?, ?, ?, ?, ?, ?)
-        """, (
-            device.device_id,
-            int(device.device_status),
-            f"{today} {entry['hour']:02d}:00:00",
-            int(entry['temperature']),
-            entry['brightness'],
-            device.device_name 
-        ))
+
+            temp_value = None
+            brightness_value = None
+
+            if device.device_type == "Heater":
+                temp_value = entry["temperature"]
+
+            if device.device_type == "Lamp":
+                brightness_value = entry["brightness"]
+
+            cursor.execute("""
+                INSERT INTO device_event_log 
+                (device_id, device_name, device_type,
+                 device_status, event_timestamp,
+                 temp_value, brightness_value)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            """, (
+                device.device_id,
+                device.device_name,
+                device.device_type,
+                int(device.device_status),
+                f"{today} {entry['hour']:02d}:00:00",
+                temp_value,
+                brightness_value
+            ))
+
     conn.commit()
     conn.close()
+
+if __name__ == "__main__":
+    run_simulation()
