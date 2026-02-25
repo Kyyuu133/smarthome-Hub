@@ -119,3 +119,18 @@ class Heater(Device):
             database=database
         )
         
+    def check_temperature(self, current_temperature: float):
+        """
+        Schaltet den Heater automatisch:
+        - EIN bei <= 8°C
+        - AUS bei >= 20°C
+        """
+        if current_temperature <= 8:
+            if not self.device_status:
+                print(f"{self.device_name}: {current_temperature}°C → Heater ON")
+                self.turn_on()
+
+        elif current_temperature >= 20:
+            if self.device_status:
+                print(f"{self.device_name}: {current_temperature}°C → Heater OFF")
+                self.turn_off()
