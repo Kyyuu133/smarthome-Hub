@@ -56,12 +56,19 @@ CREATE TABLE IF NOT EXISTS device_event_log (
     FOREIGN KEY (device_status) REFERENCES devices(device_status) 
 );
 
--- 7. Automation rules
+-- 7. automation
 CREATE TABLE IF NOT EXISTS automation_rules (
     automation_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    automation_name TEXT NOT NULL,
-    automation_acitve BOOL NOT NULL DEFAULT 0, -- true = enabled, false = disabled
-    trigger_type TEXT NOT NULL CHECK(trigger_type IN('sensor', 'time')),
+    device_id INTEGER NOT NULL,
+    device_name TEXT NOT NULL DEFAULT '',
     device_status BOOLEAN NOT NULL DEFAULT 0,
-    FOREIGN KEY (device_status) REFERENCES devices(device_status)
+    room_name TEXT NOT NULL DEFAULT '',
+    temp_treshold_high INTEGER NOT NULL DEFAULT 0,
+    temp_treshold_low INTEGER NOT NULL DEFAULT 0,
+    brightness_treshold_high INTEGER NOT NULL DEFAULT 0,
+    brightness_treshold_low INTEGER NOT NULL DEFAULT 0,    
+    FOREIGN KEY (room_name) REFERENCES rooms(room_name),
+    FOREIGN KEY (device_status) REFERENCES devices(device_status),
+    FOREIGN KEY (device_id) REFERENCES devices(device_id),
+    FOREIGN KEY (device_name) REFERENCES devices(device_name)
 );
