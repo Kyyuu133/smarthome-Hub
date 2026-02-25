@@ -6,6 +6,16 @@
 <body>
 
 <h2>📜 Full Event History</h2>
+<a href="/status/events/all_devices">Back to All Devices</a>
+&nbsp;|&nbsp;
+<a href="/status/events">Back to Status Overview</a>
+&nbsp;|&nbsp;
+<a href="/list">Back to Rooms</a>
+&nbsp;|&nbsp;
+<a href="/dashboard">Back to Dashboard</a>
+
+<br>
+<br>
 
 {% if events %}
 <table border="1" cellpadding="8" cellspacing="0">
@@ -13,6 +23,7 @@
         <tr>
             <th>Event ID</th>
             <th>Device ID</th>
+            <th>Device Name</th>
             <th>Status</th>
             <th>Temp (°C)</th>
             <th>Brightness (lux)</th>
@@ -25,7 +36,8 @@
         <tr>
             <td>{{ e["event_id"] }}</td>
             <td>{{ e["device_id"] }}</td>
-            <td>{{ "ON" if e["device_status"] else "OFF" }}</td>
+            <td>{{ e["device_name"] }}</td>
+            <td>{{ "✅" if e["device_status"] else "❌" }}</td>
             <td>{{ e["temp_value"] }}</td>
             <td>{{ e["brightness_value"] }}</td>
             <td>{{ e["event_timestamp"] }}</td>
@@ -38,10 +50,6 @@
 <p>No events found.</p>
 {% endif %}
 
-<br>
-<a href="/status/events">Back to Overview</a>
-&nbsp;|&nbsp;
-<a href="/list">Back to Rooms</a>
 
 </body>
 </html>
