@@ -127,7 +127,7 @@ Das System verwendet SQLite mit folgenden Haupttabellen:
 
 **Nutzer Anlegen**
 
-![[Create New Account.png]]
+![[Create New Account.png](/)]
 
 **Raum erstellen**
 
