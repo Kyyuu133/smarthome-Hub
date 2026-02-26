@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Rules for {{ device["device_name"] }}</title>
+    
+</head>
+<body>
+    <h1>⚙️ Rules for Device</h1>
+    
+    <div class="device-info">
+        <h2>{{ device["device_name"] }}</h2>
+        <p><strong>Type:</strong> {{ device["device_type"] }}</p>
+        <p><strong>Room:</strong> {{ device["room_name"] }}</p>
+        <p><strong>Status:</strong> {{ "ON" if device["device_status"] == 1 else "OFF" }}</p>
+    </div>
+    
+    <a href="/rules/create/{{ device['device_id'] }}" class="btn btn-create">+ Create New Rule</a>
+    
+    <hr>
+    
+    <h2>Existing Rules</h2>
+    
+    {% if rules %}
+        {% for rule in rules %}
+        <div class="rule-card">
+            <h3>Rule #{{ rule["rules_id"] }}</h3>
+            
+            <div class="rule-details">
+                <div class="rule-detail">
+                    <label>🌡️ Temperature High Threshold:</label>
+                    <value>{{ rule["temp_treshold_high"] if rule["temp_treshold_high"] else "Not set" }}</value>
+                </div>
+                
+                <div class="rule-detail">
+                    <label>❄️ Temperature Low Threshold:</label>
+                    <value>{{ rule["temp_treshold_low"] if rule["temp_treshold_low"] else "Not set" }}</value>
+                </div>
+                
+                <div class="rule-detail">
+                    <label>💡 Brightness High Threshold:</label>
+                    <value>{{ rule["brightness_treshold_high"] if rule["brightness_treshold_high"] else "Not set" }}</value>
+                </div>
+                
+                <div class="rule-detail">
+                    <label>🌙 Brightness Low Threshold:</label>
+                    <value>{{ rule["brightness_treshold_low"] if rule["brightness_treshold_low"] else "Not set" }}</value>
+                </div>
+            </div>
+            
+            <div class="actions">
+                <a href="/rules/edit/{{ rule['rules_id'] }}" class="btn btn-edit">Edit Rule</a>
+                <form action="/rules/delete/{{ rule['rules_id'] }}" method="post" style="display: inline;"
+                      onsubmit="return confirm('Are you sure you want to delete this rule?');">
+                    <button type="submit" class="btn btn-delete">Delete Rule</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+    <div class="no-rules">
+        <h3>No Rules Yet</h3>
+        <p>This device doesn't have any automation rules yet.</p>
+        <p>Click "Create New Rule" above to add one!</p>
+    </div>
+    {% endif %}
+    
+    <hr>
+    <a href="/devices/list/room?room_id={{ device['room_id'] }}" class="back-link">← Back to Device List</a>
+    <a href="/dashboard" class="back-link">Dashboard</a>
+</body>
+</html>

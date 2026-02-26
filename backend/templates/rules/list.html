@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Rules Overview</title>
+    
+</head>
+<body>
+    <h1>📋 Rules Overview</h1>
+    <p>Logged in as: <strong>{{ user["user_name"] }}</strong> ({{ user["user_role"] }})</p>
+    <hr>
+    
+    <a href="/dashboard" class="back-link">← Back to Dashboard</a>
+    
+    {% if rules %}
+    <h2>All Rules ({{ rules|length }})</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Rule ID</th>
+                <th>Room</th>
+                <th>Device</th>
+                <th>Temp High</th>
+                <th>Temp Low</th>
+                <th>Brightness High</th>
+                <th>Brightness Low</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for rule in rules %}
+            <tr>
+                <td>{{ rule["rules_id"] }}</td>
+                <td>{{ rule["room_name"] or "N/A" }}</td>
+                <td>{{ rule["device_name"] or "Device " + rule["device_id"]|string }}</td>
+                <td>{{ rule["temp_treshold_high"] if rule["temp_treshold_high"] else "—" }}</td>
+                <td>{{ rule["temp_treshold_low"] if rule["temp_treshold_low"] else "—" }}</td>
+                <td>{{ rule["brightness_treshold_high"] if rule["brightness_treshold_high"] else "—" }}</td>
+                <td>{{ rule["brightness_treshold_low"] if rule["brightness_treshold_low"] else "—" }}</td>
+                <td>
+                    <div class="actions">
+                        <a href="/rules/edit/{{ rule['rules_id'] }}" class="btn btn-edit">Edit</a>
+                        <form action="/rules/delete/{{ rule['rules_id'] }}" method="post" style="display: inline;" 
+                              onsubmit="return confirm('Delete this rule?');">
+                            <button type="submit" class="btn btn-delete">Delete</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="no-rules">
+        <h2>No Rules Yet</h2>
+        <p>No automation rules have been created yet.</p>
+        <p>Go to a device to create rules.</p>
+    </div>
+    {% endif %}
+    
+    <hr>
+    <a href="/list" class="back-link">View Rooms & Devices</a>
+</body>
+</html>

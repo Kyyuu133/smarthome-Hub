@@ -6,6 +6,8 @@ class Device:
         self.device_status = bool(device_status)
         self.room_id = room_id
         self.database = database
+        self.brightness = None
+        
 
     def turn_on(self):
         self.device_status = True
@@ -86,8 +88,14 @@ class Lamp(Device):
             device_status=device_status,
             room_id=room_id,
             database=database
-        )
+            )
         self.brightness = brightness
+
+    def set_brightness(self, level: int):
+        """Setzt die Helligkeit (0–100). Nur für Geräte mit Brightness."""
+        if self.brightness == 0:
+            print(f"{self.device_name} does not support brightness control")
+            return
 
     def set_brightness(self, level: int):
         """Setzt die Helligkeit (0–100)."""

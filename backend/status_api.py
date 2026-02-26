@@ -151,32 +151,42 @@ async def get_events_history(request: Request):
         {"request": request, "events": events}
     )
 
-
 @router.get("/events/device/history/{device_id}", response_class=HTMLResponse)
 async def get_device_history(request: Request, device_id: int):
-    """
-    Ereignishistorie für ein einzelnes Gerät (nach device_id)
-    """
-    print(f"[DEBUG] Route /status/events/device/history/{device_id} wurde aufgerufen")
-    
+
     conn, curs = get_db()
+
     try:
+        # Events holen
         curs.execute(
             "SELECT * FROM device_event_log WHERE device_id = ? ORDER BY event_id DESC",
             (device_id,)
         )
         events = curs.fetchall()
-        print(f"[DEBUG] {len(events)} Events für Device {device_id} gefunden")
+
+        # Gerät holen
+        curs.execute(
+            "SELECT * FROM devices WHERE device_id = ?",
+            (device_id,)
+        )
+        device = curs.fetchone()
+
     except sqlite3.OperationalError as e:
         print(f"[DEBUG] SQL Error: {e}")
         events = []
+        device = None
     finally:
         conn.close()
 
     if not events:
         return RedirectResponse("/list", status_code=303)
-    
+
     return templates.TemplateResponse(
-        "status/events/device_history.html", 
-        {"request": request, "events": events, "device_id": device_id}
+        "status/events/device_history.html",
+        {
+            "request": request,
+            "events": events,
+            "device_id": device_id,
+            "device": device,  # ✅ JETZT vorhanden
+        }
     )

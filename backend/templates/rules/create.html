@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Rule</title>
+    
+</head>
+<body>
+    <h1>📝 Create New Rule</h1>
+    
+    <div class="device-info">
+        <h2>{{ device["device_name"] }}</h2>
+        <p><strong>Type:</strong> {{ device["device_type"] }}</p>
+        <p><strong>Room:</strong> {{ device["room_name"] }}</p>
+    </div>
+    
+    <div class="info-box">
+        <strong>ℹ️ Note:</strong> Set thresholds to automatically control this device. 
+        Leave fields at 0 if you don't want to use that threshold.
+    </div>
+    
+    <div class="form-container">
+        <form action="/rules/create/{{ device['device_id'] }}" method="post">
+            
+            {% if device["device_type"] == "Heater" %}
+
+            <h3>🌡️ Temperature Thresholds</h3>
+            
+            <div class="form-group">
+                <label for="temp_treshold_high">Temperature High (°C):</label>
+                <input type="number" 
+                       id="temp_treshold_high" 
+                       name="temp_treshold_high" 
+                       value="0"
+                       placeholder="e.g., 25">
+                <small>Device will turn OFF when temperature exceeds this value</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="temp_treshold_low">Temperature Low (°C):</label>
+                <input type="number" 
+                       id="temp_treshold_low" 
+                       name="temp_treshold_low" 
+                       value="0"
+                       placeholder="e.g., 18">
+                <small>Device will turn ON when temperature falls below this value</small>
+            </div>
+            
+            <hr style="margin: 30px 0;">
+
+            {% elif device["device_type"] == "Lamp" %}
+            <h3>💡 Brightness Thresholds</h3>
+            
+            <div class="form-group">
+                <label for="brightness_treshold_high">Brightness High (%):</label>
+                <input type="number" 
+                       id="brightness_treshold_high" 
+                       name="brightness_treshold_high" 
+                       min="0" 
+                       max="100"
+                       value="0"
+                       placeholder="e.g., 80">
+                <small>Device will activate when brightness falls below this percentage</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="brightness_treshold_low">Brightness Low (%):</label>
+                <input type="number" 
+                       id="brightness_treshold_low" 
+                       name="brightness_treshold_low" 
+                       min="0" 
+                       max="100"
+                       value="0"
+                       placeholder="e.g., 20">
+                <small>Device will activate when brightness exceeds this percentage</small>
+            </div>
+                
+            {% endif %}
+
+            <div class="btn-container">
+                <button type="submit" class="btn btn-submit">✓ Create Rule</button>
+                <a href="/rules/device/{{ device['device_id'] }}" class="btn btn-cancel">✗ Cancel</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

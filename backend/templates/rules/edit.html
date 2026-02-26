@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Rule</title>
+    
+</head>
+<body>
+    <h1>✏️ Edit Rule #{{ rule["rules_id"] }}</h1>
+    
+    <div class="rule-info">
+        <h2>{{ rule["device_name"] or "Device" }}</h2>
+        <p><strong>Room:</strong> {{ rule["room_name"] or "N/A" }}</p>
+        <p><strong>Rule ID:</strong> {{ rule["rules_id"] }}</p>
+    </div>
+    
+    <div class="form-container">
+        <form action="/rules/edit/{{ rule['rules_id'] }}" method="post">
+            
+            <h3>🌡️ Temperature Thresholds</h3>
+            
+            <div class="form-group">
+                <label for="temp_treshold_high">Temperature High (°C):</label>
+                <input type="number" 
+                       id="temp_treshold_high" 
+                       name="temp_treshold_high" 
+                       value="{{ rule['temp_treshold_high'] if rule['temp_treshold_high'] else '0' }}"
+                       placeholder="e.g., 25">
+                <small>Device will turn ON when temperature exceeds this value</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="temp_treshold_low">Temperature Low (°C):</label>
+                <input type="number" 
+                       id="temp_treshold_low" 
+                       name="temp_treshold_low" 
+                       value="{{ rule['temp_treshold_low'] if rule['temp_treshold_low'] else '0' }}"
+                       placeholder="e.g., 18">
+                <small>Device will turn OFF when temperature falls below this value</small>
+            </div>
+            
+            <hr style="margin: 30px 0;">
+            
+            <h3>💡 Brightness Thresholds</h3>
+            
+            <div class="form-group">
+                <label for="brightness_treshold_high">Brightness High (%):</label>
+                <input type="number" 
+                       id="brightness_treshold_high" 
+                       name="brightness_treshold_high" 
+                       min="0" 
+                       max="100"
+                       value="{{ rule['brightness_treshold_high'] if rule['brightness_treshold_high'] else '0' }}"
+                       placeholder="e.g., 80">
+                <small>Device will activate when brightness exceeds this percentage</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="brightness_treshold_low">Brightness Low (%):</label>
+                <input type="number" 
+                       id="brightness_treshold_low" 
+                       name="brightness_treshold_low" 
+                       min="0" 
+                       max="100"
+                       value="{{ rule['brightness_treshold_low'] if rule['brightness_treshold_low'] else '0' }}"
+                       placeholder="e.g., 20">
+                <small>Device will activate when brightness falls below this percentage</small>
+            </div>
+            
+            <div class="btn-container">
+                <button type="submit" class="btn btn-submit">✓ Save Changes</button>
+                <a href="/rules/device/{{ rule['device_id'] }}" class="btn btn-cancel">✗ Cancel</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
