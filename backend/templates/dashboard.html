@@ -1,89 +1,94 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Smarthome-Dashboard</title>
-    </head>
-    <body>
-        <div>
-        <h2>Dashboard</h2>
-        <hr>
-        <br>
-        <p>Welcome {{ user["user_name"] }}</p>
-        <p>Your Role: {{ user["user_role"] }}</p>
-        <br>
-        <hr>
-        <h3>Edit Profile</h3>
-            <!-- wir rufen update password auf, alle user haben zugriff darauf -->
+<head>
+    <title>Smart Home - Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="welcome-section">
+        <h2>🏠 Smart Home Dashboard</h2>
+        <p>Welcome, {{ user["user_name"] }}!</p>
+        <p>Your Role: <strong>{{ user["user_role"] }}</strong></p>
+    </div>
+
+    <!-- Edit Profile Section -->
+    <div class="dashboard-section">
+        <h3>👤 Edit Profile</h3>
         <form action="/update_password" method="post">
             <input type="hidden" name="target_user_id" value="{{ user['user_id'] }}">
             <input type="hidden" name="user_name" value="{{ user['user_name'] }}">
-
-            <label>New Password:</label>
-            <input type="password" name="new_user_password" required>
-            <br><br>
-
-            <button type="submit">Change Password</button>
-        </form>
-        <br> 
-        <br>
-        <!-- admin maske nur für admin einsehbar-->
-        {% if user["user_role"] == "admin" %}   
-        
-        <hr>
-        <h3>Manage Users</h3>
-        <!-- wir gehen alle user durch -->
-        {% for u in all_users %}    
-        
-        <!-- kleine box um einträge für lesbarkeit -->
-        <div style="border:1px solid black; padding:10px; margin:10px;">
-        
-        <p>{{ u["user_name"] }} ({{ u["user_role"] }})</p>
-
-        <!-- admin kann pws anderer nutzer ändern -->
-        <hr>
-        <form action="/update_password" method="post">
-            <input type="hidden" name="target_user_id" value="{{ u['user_id'] }}">
-            <input type="password" name="new_user_password" placeholder="New Password" required>
-            <button type="submit">Change Password</button>
-        </form>
-
-        <!-- admin kann rollen anderer nutzer ändern, target user id  -->
-        <hr>
-        <form action="/update_role" method="post">
-            <input type="hidden" name="target_user_id" value="{{ u['user_id'] }}">
-            <input type="hidden" name="user_name" value="{{ u['user_name'] }}">
-            <button type="submit">Change Role</button>
-            <select name="new_role">
-                <option value="user">User</option>
-                <option value="admin">Admin</option>
-            </select>
             
+            <div class="form-group">
+                <label for="new_user_password">New Password:</label>
+                <input type="password" id="new_user_password" name="new_user_password" required>
+            </div>
+            
+            <button type="submit">Change Password</button>
         </form>
+    </div>
 
+    <!-- Admin Section -->
+    {% if user["user_role"] == "admin" %}   
+    <div class="dashboard-section">
+        <h3>👥 Manage Users</h3>
+        
+        {% for u in all_users %}    
+        <div class="user-card">
+            <h4>{{ u["user_name"] }} <span style="color: var(--text-secondary); font-size: 0.9rem;">({{ u["user_role"] }})</span></h4>
+            
+            <hr>
+            
+            <!-- Change Password -->
+            <form action="/update_password" method="post">
+                <input type="hidden" name="target_user_id" value="{{ u['user_id'] }}">
+                <div class="form-group">
+                    <label for="new_password_{{ u['user_id'] }}">New Password:</label>
+                    <input type="password" id="new_password_{{ u['user_id'] }}" name="new_user_password" placeholder="New Password" required>
+                </div>
+                <button type="submit" class="btn-secondary">Change Password</button>
+            </form>
+
+            <hr>
+
+            <!-- Change Role -->
+            <form action="/update_role" method="post" style="display: flex; gap: 1rem; align-items: flex-end;">
+                <input type="hidden" name="target_user_id" value="{{ u['user_id'] }}">
+                <input type="hidden" name="user_name" value="{{ u['user_name'] }}">
+                <div class="form-group" style="flex: 1; margin-bottom: 0;">
+                    <label for="new_role_{{ u['user_id'] }}">Change Role:</label>
+                    <select id="new_role_{{ u['user_id'] }}" name="new_role">
+                        <option value="user" {{ 'selected' if u['user_role'] == 'user' else '' }}>User</option>
+                        <option value="admin" {{ 'selected' if u['user_role'] == 'admin' else '' }}>Admin</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-warning">Update Role</button>
+            </form>
         </div>
-
         {% endfor %}
+    </div>
+    {% endif %}
 
-        {% endif %}
-        <hr>
-        <h3>Room & Device Management</h3>
+    <!-- Room & Device Management -->
+    <div class="dashboard-section">
+        <h3>🚪 Room & Device Management</h3>
+        <a href="/list" class="btn btn-primary">Manage Rooms</a>
+    </div>
 
-        <a href="/list">Manage Rooms</a>
-        <br><br>
+    <!-- Status & Events -->
+    <div class="dashboard-section">
+        <h3>📊 Status & Events</h3>
+        <a href="/status/events" class="btn btn-primary">Device Status & Event Log</a>
+    </div>
 
-        <br><br>
-        <hr>
-        <h3>Status & Events</h3>
-        <a href="/status/events">Device Status & Event Log</a>
-        <br><br>
-        <hr>
-        <h3>Automation Rules</h3>
-        <a href="/rules/">🔧 Manage Rules</a>
-        <br>
-        <br>
-        <hr>                
-        <!-- login verweist jetzt nicht mehr nur auf startseite sondern ruft /logout call auf, welcher session beendet -->
-        <a href="/logout">Logout</a>
-        </div>
-    </body>
+    <!-- Automation Rules -->
+    <div class="dashboard-section">
+        <h3>⚙️ Automation Rules</h3>
+        <a href="/rules/" class="btn btn-primary">🔧 Manage Rules</a>
+    </div>
+
+    <!-- Logout -->
+    <div class="navigation-links">
+        <a href="/logout" class="btn btn-danger">Logout</a>
+    </div>
+</body>
 </html>

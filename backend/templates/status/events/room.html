@@ -1,47 +1,48 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Room Events</title>
+    <title>Smart Home - Room Events</title>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
+    <h1>🏠 Events for Current Room</h1>
 
-<h2>🏠 Events for Current Room</h2>
+    <div class="navigation-links">
+        <a href="/status/events">← Status Overview</a>
+        <a href="/list">← Rooms</a>
+    </div>
 
-{% if events %}
-<table border="1" cellpadding="8" cellspacing="0">
-    <thead>
-        <tr>
-            <th>Event ID</th>
-            <th>Device ID</th>
-            <th>Status</th>
-            <th>Temp (°C)</th>
-            <th>Brightness (%)</th>
-            <th>Timestamp</th>
-            <th>Device History</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for e in events %}
-        <tr>
-            <td>{{ e["event_id"] }}</td>
-            <td>{{ e["device_id"] }}</td>
-            <td>{{ "✅" if e["device_status"] else "❌" }}</td>
-            <td>{{ e["temp_value"] }}</td>
-            <td>{{ e["brightness_value"] }}</td>
-            <td>{{ e["event_timestamp"] }}</td>
-            <td><a href="/status/events/device/history/{{ e['device_id'] }}">View</a></td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-{% else %}
-<p>No events found for this room.</p>
-{% endif %}
-
-<br>
-<a href="/status/events">Back to Overview</a>
-&nbsp;|&nbsp;
-<a href="/list">Back to Rooms</a>
-
+    {% if events %}
+    <table>
+        <thead>
+            <tr>
+                <th>Event ID</th>
+                <th>Device ID</th>
+                <th>Status</th>
+                <th>Temp (°C)</th>
+                <th>Brightness (%)</th>
+                <th>Timestamp</th>
+                <th>Device History</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for e in events %}
+            <tr>
+                <td>{{ e["event_id"] }}</td>
+                <td>{{ e["device_id"] }}</td>
+                <td>{{ "✅" if e["device_status"] else "❌" }}</td>
+                <td>{{ e["temp_value"] }}</td>
+                <td>{{ e["brightness_value"] }}</td>
+                <td>{{ e["event_timestamp"] }}</td>
+                <td><a href="/status/events/device/history/{{ e['device_id'] }}">View</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="no-data">
+        <p>No events found for this room.</p>
+    </div>
+    {% endif %}
 </body>
 </html>

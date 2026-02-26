@@ -1,86 +1,82 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Device History</title>
+    <title>Smart Home - Device History</title>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
+    <h1>📋 History for Device #{{ device_id }} 
+        {% if events %}{{ events[0]["device_name"] }}{% endif %}
+    </h1>
 
-<h2>📋 History for Device #{{ device_id }} {% if events %}
-    {{ events[0]["device_name"] }}
-{% endif %}</h2>
+    <div class="navigation-links">
+        <a href="/status/events/all_devices">← All Devices</a>
+        <a href="/status/events">← Status Overview</a>
+        <a href="/list">← Rooms</a>
+        <a href="/dashboard">📊 Dashboard</a>
+    </div>
 
+    {% if events %}
 
-<a href="/status/events/all_devices">Back to All Devices</a>
-&nbsp;|&nbsp;
-<a href="/status/events">Back to Status Overview</a>
-&nbsp;|&nbsp;
-<a href="/list">Back to Rooms</a>
-&nbsp;|&nbsp;
-<a href="/dashboard">Back to Dashboard</a>
-<br>
-<br>
-{% if events %}
+        {% if device["device_type"] == "Heater" %}
+        <h2>🔥 Heater Events</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Event ID</th>
+                    <th>Device Name</th>
+                    <th>Device ID</th>
+                    <th>Status</th>
+                    <th>Temp (°C)</th>
+                    <th>Timestamp</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for e in events %}
+                <tr>
+                    <td>{{ e["event_id"] }}</td>
+                    <td>{{ e["device_name"] }}</td>
+                    <td>{{ e["device_id"] }}</td>
+                    <td>{{ "✅" if e["device_status"] else "❌" }}</td>
+                    <td>{{ e["temp_value"] }}</td>
+                    <td>{{ e["event_timestamp"] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
 
-{% if device["device_type"] == "Heater" %}
+        {% elif device["device_type"] == "Lamp" %}
+        <h2>💡 Lamp Events</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Event ID</th>
+                    <th>Device Name</th>
+                    <th>Device ID</th>
+                    <th>Status</th>
+                    <th>Brightness (%)</th>
+                    <th>Timestamp</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for e in events %}
+                <tr>
+                    <td>{{ e["event_id"] }}</td>
+                    <td>{{ e["device_name"] }}</td>
+                    <td>{{ e["device_id"] }}</td>
+                    <td>{{ "✅" if e["device_status"] else "❌" }}</td>
+                    <td>{{ e["brightness_value"] }}</td>
+                    <td>{{ e["event_timestamp"] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
 
-<table border="1" cellpadding="8" cellspacing="0">
-    <thead>
-        <tr>
-            <th>Event ID</th>
-            <th>Device Name</th>
-            <th>Device ID</th>
-            <th>Status</th>
-            <th>Temp (°C)</th>
-            <th>Timestamp</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for e in events %}
-        <tr>
-            <td>{{ e["event_id"] }}</td>
-            <td>{{ e["device_name"] }}</td>
-            <td>{{ e["device_id"] }}</td>
-            <td>{{ "✅" if e["device_status"] else "❌" }}</td>
-            <td>{{ e["temp_value"] }}</td>
-            <td>{{ e["event_timestamp"] }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-{% elif device["device_type"] == "Lamp" %}
-
-
-<table border="1" cellpadding="8" cellspacing="0">
-    <thead>
-        <tr>
-            <th>Event ID</th>
-            <th>Device Name</th>
-            <th>Device ID</th>
-            <th>Status</th>
-            <th>Brightness (%)</th>
-            <th>Timestamp</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for e in events %}
-        <tr>
-            <td>{{ e["event_id"] }}</td>
-            <td>{{ e["device_name"] }}</td>
-            <td>{{ e["device_id"] }}</td>
-            <td>{{ "❌" if e["device_status"] else "✅" }}</td>
-            <td>{{ e["brightness_value"] }}</td>
-            <td>{{ e["event_timestamp"] }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-
-{% endif %}
-
-{% else %}
-<p>No events found for this device.</p>
-{% endif %}
-
-
+    {% else %}
+    <div class="no-data">
+        <p>No events found for this device.</p>
+    </div>
+    {% endif %}
 </body>
 </html>

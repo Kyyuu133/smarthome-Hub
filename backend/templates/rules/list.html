@@ -1,15 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Rules Overview</title>
-    
+    <title>Smart Home - Rules Overview</title>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
     <h1>📋 Rules Overview</h1>
     <p>Logged in as: <strong>{{ user["user_name"] }}</strong> ({{ user["user_role"] }})</p>
-    <hr>
     
-    <a href="/dashboard" class="back-link">← Back to Dashboard</a>
+    <div class="navigation-links">
+        <a href="/dashboard">← Back to Dashboard</a>
+    </div>
+
+    <hr>
     
     {% if rules %}
     <h2>All Rules ({{ rules|length }})</h2>
@@ -39,8 +42,7 @@
                 <td>
                     <div class="actions">
                         <a href="/rules/edit/{{ rule['rules_id'] }}" class="btn btn-edit">Edit</a>
-                        <form action="/rules/delete/{{ rule['rules_id'] }}" method="post" style="display: inline;" 
-                              onsubmit="return confirm('Delete this rule?');">
+                        <form action="/rules/delete/{{ rule['rules_id'] }}" method="post" onsubmit="return confirm('Delete this rule?');">
                             <button type="submit" class="btn btn-delete">Delete</button>
                         </form>
                     </div>
@@ -57,7 +59,8 @@
     </div>
     {% endif %}
     
-    <hr>
-    <a href="/list" class="back-link">View Rooms & Devices</a>
+    <div class="navigation-links">
+        <a href="/list">View Rooms & Devices</a>
+    </div>
 </body>
 </html>

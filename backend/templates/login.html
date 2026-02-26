@@ -1,27 +1,29 @@
 <!DOCTYPE html>
 <html>
-    
-    <head>
-        <title>Loginpage</title>
-    </head>
-
-    <body>
-        <h2>Login</h2>
-            <!-- wir rufen den login call der user_api auf und erstellen eine form für die übergabe von variablen -->
+<head>
+    <title>Smart Home - Login</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="login-container">
+        <h2>🏠 Smart Home Login</h2>
         <form action="/login" method="post">
-            <label>Username:</label>
-            <input type="text" name="user_name" required>
-            <br><br>
-            <label>Password:</label>
-            <input type="password" name="user_password" required>
-            <br><br>
-            <a href="/setup">Neuen Benutzer erstellen?</a>
-            <br><br>
+            <div class="form-group">
+                <label for="user_name">Username:</label>
+                <input type="text" id="user_name" name="user_name" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="user_password">Password:</label>
+                <input type="password" id="user_password" name="user_password" required>
+            </div>
+            
             <button type="submit">Login</button>
+            
+            <div class="text-center mt-2">
+                <a href="/setup">Create new account</a>
+            </div>
         </form>
-    </body>
-     
+    </div>
+</body>
 </html>
-
-<!-- variablennamen anpassen uniform
-basemodel rausnehmen -->

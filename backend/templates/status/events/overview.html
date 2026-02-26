@@ -1,22 +1,30 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Status Overview</title>
+    <title>Smart Home - Status Overview</title>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
+    <h1>📊 Status Overview</h1>
 
-<h2>📊 Status Overview</h2>
+    <div class="card">
+        <ul style="list-style: none; padding: 0;">
+            <li style="margin: 1rem 0;">
+                <a href="/status/events/all_devices" class="btn btn-primary" style="display: block; text-align: center;">
+                    📱 Current Device States
+                </a>
+            </li>
+            <li style="margin: 1rem 0;">
+                <a href="/status/events/history" class="btn btn-primary" style="display: block; text-align: center;">
+                    📜 Full Event History
+                </a>
+            </li>
+        </ul>
+    </div>
 
-<ul>
-    <li><a href="/status/events/all_devices">🔌 Current Device States</a></li>
-    <li><a href="/status/events/history">📜 Full event history</a></li>
-    <li><a href="/status/events/room">🏠 Events for current room</a></li>
-    <li><a href="/dashboard">Back to Dashboard</a></li>
-
-</ul>
-
-<br>
-<a href="/list">Back to Rooms</a>
-
+    <div class="navigation-links">
+        <a href="/list">← Back to Rooms</a>
+        <a href="/dashboard">📊 Back to Dashboard</a>
+    </div>
 </body>
 </html>

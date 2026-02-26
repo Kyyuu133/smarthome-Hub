@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Create Rule</title>
-    
+    <title>Smart Home - Create Rule</title>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
     <h1>📝 Create New Rule</h1>
@@ -22,7 +22,6 @@
         <form action="/rules/create/{{ device['device_id'] }}" method="post">
             
             {% if device["device_type"] == "Heater" %}
-
             <h3>🌡️ Temperature Thresholds</h3>
             
             <div class="form-group">
@@ -44,8 +43,6 @@
                        placeholder="e.g., 18">
                 <small>Device will turn ON when temperature falls below this value</small>
             </div>
-            
-            <hr style="margin: 30px 0;">
 
             {% elif device["device_type"] == "Lamp" %}
             <h3>💡 Brightness Thresholds</h3>
@@ -73,14 +70,18 @@
                        placeholder="e.g., 20">
                 <small>Device will activate when brightness exceeds this percentage</small>
             </div>
-                
             {% endif %}
 
             <div class="btn-container">
-                <button type="submit" class="btn btn-submit">✓ Create Rule</button>
+                <button type="submit" class="btn-submit">✓ Create Rule</button>
                 <a href="/rules/device/{{ device['device_id'] }}" class="btn btn-cancel">✗ Cancel</a>
             </div>
         </form>
+    </div>
+
+    <div class="navigation-links">
+        <a href="/rules/device/{{ device['device_id'] }}">← Back to Device Rules</a>
+        <a href="/dashboard">📊 Dashboard</a>
     </div>
 </body>
 </html>

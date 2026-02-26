@@ -13,6 +13,7 @@ from rules_api import router as rules_router
 from datetime import datetime
 import threading
 from contextlib import asynccontextmanager
+from fastapi.staticfiles import StaticFiles
 
 def run_simulation_loop():
     counter = 0
@@ -29,6 +30,8 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 app.add_middleware(SessionMiddleware, secret_key="SUPER_SECRET_KEY_123")
+
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 app.include_router(users_router)
 app.include_router(rooms_router)

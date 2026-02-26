@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Rules for {{ room["room_name"] }}</title>
-    
+    <title>Smart Home - Rules for {{ room["room_name"] }}</title>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
     <h1>📋 Rules for Room</h1>
@@ -46,8 +46,7 @@
             <div class="actions">
                 <a href="/rules/device/{{ rule['device_id'] }}" class="btn btn-view">View Device Rules</a>
                 <a href="/rules/edit/{{ rule['rules_id'] }}" class="btn btn-edit">Edit</a>
-                <form action="/rules/delete/{{ rule['rules_id'] }}" method="post" style="display: inline;"
-                      onsubmit="return confirm('Delete this rule?');">
+                <form action="/rules/delete/{{ rule['rules_id'] }}" method="post" onsubmit="return confirm('Delete this rule?');">
                     <button type="submit" class="btn btn-delete">Delete</button>
                 </form>
             </div>
@@ -61,9 +60,10 @@
     </div>
     {% endif %}
     
-    <hr>
-    <a href="/devices/list/room?room_id={{ room['room_id'] }}" class="back-link">← Back to Room Devices</a>
-    <a href="/list" class="back-link">All Rooms</a>
-    <a href="/dashboard" class="back-link">Dashboard</a>
+    <div class="navigation-links">
+        <a href="/devices/list/room?room_id={{ room['room_id'] }}">← Back to Room Devices</a>
+        <a href="/list">All Rooms</a>
+        <a href="/dashboard">📊 Dashboard</a>
+    </div>
 </body>
 </html>
