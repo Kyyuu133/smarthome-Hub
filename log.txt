@@ -222,4 +222,24 @@ ________________________________________________________________________________
         Kaan:   automationen querys von timo einbinden ins dashboard,
                 kosmetisch aufarbeiten, rules api → html format,
                 create, edit, delete, view implementiert
+
+_________________________________________________________________________________________________________
+
+Mittwoch, 25.02.2026 (Niki):  
+_________________________________________________________________________________________________________
+        Alle: 
+
+        -  Revision 
+        
+        --------------------------------------------------------------------------------------------------
+        Vormittag:
+        --------------------------------------------------------------------------------------------------
+        Timo:   README geschrieben 
+                
+        Niki:   Simulation angepasst an event_log mit brightness nur für Lampen und Temperaturen nur für Heizung
+                Log.TXT geschrieben
+
+        Thomas: device.py gefixt 
+                
+        Kaan:   Templates gestyled, Day Simulatio über uvicorn, Routing UI 
                        
