@@ -1,53 +1,88 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Current Device States</title>
+    <title>Smart Home - Current Device States</title>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
+    <h1>📱 Current Device States</h1>
+    
+    <div class="navigation-links">
+        <a href="/status/events/all_devices">Refresh</a>
+        <a href="/status/events">← Status Overview</a>
+        <a href="/list">← Rooms</a>
+        <a href="/dashboard">📊 Dashboard</a>
+    </div>
 
-<h2>Current Device States</h2>
+    {% if events %}
+        <!-- Lamps Table -->
+        <h2>💡 Lamps</h2>
+        {% set lamps = events | selectattr("device_type", "equalto", "Lamp") | list %}
+        {% if lamps %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Device ID</th>
+                    <th>Status</th>
+                    <th>Name</th>
+                    <th>Brightness (%)</th>
+                    <th>Timestamp</th>
+                    <th>History</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for e in lamps %}
+                <tr>
+                    <td>{{ e["device_id"] }}</td>
+                    <td>{{ "✅" if e["device_status"] else "❌" }}</td>
+                    <td>{{ e["device_name"] }}</td>
+                    <td>{{ e["brightness_value"] }}</td>
+                    <td>{{ e["event_timestamp"] }}</td>
+                    <td><a href="/status/events/device/history/{{ e['device_id'] }}">View History</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>No lamps found.</p>
+        {% endif %}
 
-<a href="/status/events/all_devices">Back to All Devices</a>
-&nbsp;|&nbsp;
-<a href="/status/events">Back to Status Overview</a>
-&nbsp;|&nbsp;
-<a href="/list">Back to Rooms</a>
-&nbsp;|&nbsp;
-<a href="/dashboard">Back to Dashboard</a>
-<br>
-<br>
-{% if events %}
-<table border="1" cellpadding="8" cellspacing="0">
-    <thead>
-        <tr>
-            <th>Device ID</th>
-            <th>Status</th>
-            <th>Name</th>
-            <th>Device Type</th>
-            <th>Temp (°C)</th>
-            <th>Brightness (%)</th>
-            <th>Timestamp</th>
-            <th>History</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for e in events %}
-        <tr>
-            <td>{{ e["device_id"] }}</td>
-            <td>{{ "✅" if e["device_status"] else "❌" }}</td>
-            <td>{{ e["device_name"] }}</td>
-            <td>{{ e["device_type"] }}</td>
-            <td>{{ e["temp_value"] }}</td>
-            <td>{{ e["brightness_value"] }}</td>
-            <td>{{ e["event_timestamp"] }}</td>
-            <td><a href="/status/events/device/history/{{ e['device_id'] }}">View History</a></td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-{% else %}
-<p>No events found.</p>
-{% endif %}
+        <!-- Heaters Table -->
+        <h2>🔥 Heaters</h2>
+        {% set heaters = events | selectattr("device_type", "equalto", "Heater") | list %}
+        {% if heaters %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Device ID</th>
+                    <th>Status</th>
+                    <th>Name</th>
+                    <th>Temp (°C)</th>
+                    <th>Timestamp</th>
+                    <th>History</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for e in heaters %}
+                <tr>
+                    <td>{{ e["device_id"] }}</td>
+                    <td>{{ "✅" if e["device_status"] else "❌" }}</td>
+                    <td>{{ e["device_name"] }}</td>
+                    <td>{{ e["temp_value"] }}</td>
+                    <td>{{ e["event_timestamp"] }}</td>
+                    <td><a href="/status/events/device/history/{{ e['device_id'] }}">View History</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>No heaters found.</p>
+        {% endif %}
 
+    {% else %}
+    <div class="no-data">
+        <p>No events found.</p>
+    </div>
+    {% endif %}
 </body>
 </html>

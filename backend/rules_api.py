@@ -286,7 +286,6 @@ async def post_create_rule(
 
     return RedirectResponse(f"/rules/device/{device_id}", status_code=303)
 
-
 @router.get("/edit/{rules_id}", response_class=HTMLResponse)
 async def get_edit_rule(request: Request, rules_id: int):
     """
@@ -300,8 +299,13 @@ async def get_edit_rule(request: Request, rules_id: int):
 
     conn, curs = get_db()
     try:
-        # Regel holen
-        curs.execute("SELECT * FROM rules WHERE rules_id = ?", (rules_id,))
+        # Regel holen mit device_type
+        curs.execute("""
+            SELECT r.*, d.device_type 
+            FROM rules r
+            JOIN devices d ON r.device_id = d.device_id
+            WHERE r.rules_id = ?
+        """, (rules_id,))
         rule = curs.fetchone()
 
         if not rule:
@@ -327,7 +331,7 @@ async def get_edit_rule(request: Request, rules_id: int):
         })
     finally:
         conn.close()
-
+        
 
 @router.post("/edit/{rules_id}", response_class=HTMLResponse)
 async def post_edit_rule(

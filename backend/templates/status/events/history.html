@@ -1,55 +1,136 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Event History</title>
+    <title>Smart Home - Event History</title>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
+    <h1>📜 Full Event History</h1>
+    
+    <div class="navigation-links">
+        <a href="/status/events/all_devices">All Devices</a>
+        <a href="/status/events">← Status Overview</a>
+        <a href="/list">← Rooms</a>
+        <a href="/dashboard">📊 Dashboard</a>
+    </div>
 
-<h2>📜 Full Event History</h2>
-<a href="/status/events/all_devices">Back to All Devices</a>
-&nbsp;|&nbsp;
-<a href="/status/events">Back to Status Overview</a>
-&nbsp;|&nbsp;
-<a href="/list">Back to Rooms</a>
-&nbsp;|&nbsp;
-<a href="/dashboard">Back to Dashboard</a>
+    {% if events %}
+        <div class="tables-container">
+            <!-- Lamp Events -->
+            <div class="table-section">
+                <h2>🔦 Lamp Events</h2>
+                
+                {% if lamp_total_pages > 1 %}
+                <div class="pagination">
+                    {% if lamp_page > 1 %}
+                    <a href="?lamp_page=1&heater_page={{ heater_page }}">« First</a>
+                    <a href="?lamp_page={{ lamp_page - 1 }}&heater_page={{ heater_page }}">‹ Prev</a>
+                    {% else %}
+                    <span class="disabled">« First</span>
+                    <span class="disabled">‹ Prev</span>
+                    {% endif %}
+                    
+                    <span class="current">{{ lamp_page }} / {{ lamp_total_pages }}</span>
+                    
+                    {% if lamp_page < lamp_total_pages %}
+                    <a href="?lamp_page={{ lamp_page + 1 }}&heater_page={{ heater_page }}">Next ›</a>
+                    <a href="?lamp_page={{ lamp_total_pages }}&heater_page={{ heater_page }}">Last »</a>
+                    {% else %}
+                    <span class="disabled">Next ›</span>
+                    <span class="disabled">Last »</span>
+                    {% endif %}
+                </div>
+                {% endif %}
+                
+                {% set lamps = lamp_events %}
+                {% if lamps %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Event ID</th>
+                            <th>Device Name</th>
+                            <th>Status</th>
+                            <th>Brightness (%)</th>
+                            <th>Timestamp</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for e in lamps %}
+                        <tr>
+                            <td>{{ e["event_id"] }}</td>
+                            <td>{{ e["device_name"] }}</td>
+                            <td>{{ "✅" if e["device_status"] else "❌" }}</td>
+                            <td>{{ e["brightness_value"] }}</td>
+                            <td>{{ e["event_timestamp"] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p>No lamp events found.</p>
+                {% endif %}
+            </div>
 
-<br>
-<br>
+            <!-- Heater Events -->
+            <div class="table-section">
+                <h2>🔥 Heater Events</h2>
+                
+                {% if heater_total_pages > 1 %}
+                <div class="pagination">
+                    {% if heater_page > 1 %}
+                    <a href="?lamp_page={{ lamp_page }}&heater_page=1">« First</a>
+                    <a href="?lamp_page={{ lamp_page }}&heater_page={{ heater_page - 1 }}">‹ Prev</a>
+                    {% else %}
+                    <span class="disabled">« First</span>
+                    <span class="disabled">‹ Prev</span>
+                    {% endif %}
+                    
+                    <span class="current">{{ heater_page }} / {{ heater_total_pages }}</span>
+                    
+                    {% if heater_page < heater_total_pages %}
+                    <a href="?lamp_page={{ lamp_page }}&heater_page={{ heater_page + 1 }}">Next ›</a>
+                    <a href="?lamp_page={{ lamp_page }}&heater_page={{ heater_total_pages }}">Last »</a>
+                    {% else %}
+                    <span class="disabled">Next ›</span>
+                    <span class="disabled">Last »</span>
+                    {% endif %}
+                </div>
+                {% endif %}
+                
+                {% set heaters = heater_events %}
+                {% if heaters %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Event ID</th>
+                            <th>Device Name</th>
+                            <th>Status</th>
+                            <th>Temp (°C)</th>
+                            <th>Timestamp</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for e in heaters %}
+                        <tr>
+                            <td>{{ e["event_id"] }}</td>
+                            <td>{{ e["device_name"] }}</td>
+                            <td>{{ "✅" if e["device_status"] else "❌" }}</td>
+                            <td>{{ e["temp_value"] }}</td>
+                            <td>{{ e["event_timestamp"] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p>No heater events found.</p>
+                {% endif %}
+            </div>
+        </div>
 
-{% if events %}
-<table border="1" cellpadding="8" cellspacing="0">
-    <thead>
-        <tr>
-            <th>Event ID</th>
-            <th>Device ID</th>
-            <th>Device Name</th>
-            <th>Status</th>
-            <th>Temp (°C)</th>
-            <th>Brightness (%)</th>
-            <th>Timestamp</th>
-            <th>Device History</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for e in events %}
-        <tr>
-            <td>{{ e["event_id"] }}</td>
-            <td>{{ e["device_id"] }}</td>
-            <td>{{ e["device_name"] }}</td>
-            <td>{{ "✅" if e["device_status"] else "❌" }}</td>
-            <td>{{ e["temp_value"] }}</td>
-            <td>{{ e["brightness_value"] }}</td>
-            <td>{{ e["event_timestamp"] }}</td>
-            <td><a href="/status/events/device/history/{{ e['device_id'] }}">View</a></td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-{% else %}
-<p>No events found.</p>
-{% endif %}
-
-
+    {% else %}
+    <div class="no-data">
+        <p>No events found.</p>
+    </div>
+    {% endif %}
 </body>
 </html>

@@ -1,66 +1,62 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Devices</title>
+    <title>Smart Home - Devices</title>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
+    <h1>📱 Devices in {{ room["room_name"] }}</h1>
+    
+    <a href="/devices/add?room_id={{ room['room_id'] }}" class="btn btn-create">+ Add New Device</a>
 
-<h2>Devices in {{ room["room_name"] }}</h2>
+    <div class="devices-container">
+        {% for device in devices %}
+        <div class="device-card">
+            <h4>{{ device["device_name"] }}</h4>
+            <p><strong>Type:</strong> {{ device["device_type"] }}</p>
+            <p><strong>Status:</strong> 
+                {% if device["device_status"] == 1 %}
+                    <span class="status-badge status-on">✅ ON</span>
+                {% else %}
+                    <span class="status-badge status-off">❌ OFF</span>
+                {% endif %}
+            </p>
+            
+            <hr>
+            
+            <!-- Status Toggle -->
+            <form action="/devices/status" method="post">
+                <input type="hidden" name="device_id" value="{{ device['device_id'] }}">
+                <input type="hidden" name="room_id" value="{{ room['room_id'] }}">
+                <input type="hidden" name="device_status" value="{{ 0 if device['device_status'] == 1 else 1 }}">
+                <button type="submit" class="{% if device['device_status'] == 1 %}btn-danger{% else %}btn-success{% endif %}">
+                    {{ '🔴 Turn Off' if device['device_status'] == 1 else '🟢 Turn On' }}
+                </button>
+            </form>
+            
+            <!-- Rules Section -->
+            <div style="margin: 1rem 0;">
+                <a href="/rules/device/{{ device['device_id'] }}">📋 View Rules</a>
+                <br>
+                <a href="/rules/create/{{ device['device_id'] }}">➕ Create Rule</a>
+            </div>
+            
+            <hr>
+            
+            <!-- Delete Device -->
+            <form action="/devices/delete" method="post">
+                <input type="hidden" name="device_id" value="{{ device['device_id'] }}">
+                <input type="hidden" name="room_id" value="{{ room['room_id'] }}">
+                <button type="submit" class="btn-danger">🗑️ Delete</button>
+            </form>
+        </div>
+        {% endfor %}
+    </div>
 
-<a href="/devices/add?room_id={{ room['room_id'] }}">
-    + Add New Device
-</a>
-
-<br><br>
-
-{% for device in devices %}
-<div style="border:1px solid gray; padding:10px; margin:10px; width:300px;">
-
-    <p><b>{{ device["device_name"] }}</b></p>
-    <p>Type: {{ device["device_type"] }}</p>
-    <p>Status: {{ "ON" if device["device_status"] == 1 else "OFF" }}</p>
-
-    <!-- Status Toggle -->
-    <form action="/devices/status" method="post">
-        <input type="hidden" name="device_id" value="{{ device['device_id'] }}">
-        <input type="hidden" name="room_id" value="{{ room['room_id'] }}">
-        <input type="hidden" name="device_status" value="{{ 0 if device['device_status'] == 1 else 1 }}">
-            <button type="submit">{{ 'Turn Off' if device['device_status'] == 1 else 'Turn On' }}</button>
-    </form> 
-
-    <h4>{{ device["device_name"] }}</h4>
-    <p>Type: {{ device["device_type"] }}</p>
-    <p>Status: {{ device["device_status"] }}</p>
-
-    <hr>
-
-    <!-- 🔧 Rules Section -->
-    <a href="/rules/device/{{ device['device_id'] }}">
-        📋 View Rules
-    </a>
-
-    <br><br>
-
-    <a href="/rules/create/{{ device['device_id'] }}">
-        ➕ Create Rule
-    </a>
-
-    <br>
-
-    <!-- Gerät löschen -->
-    <form action="/devices/delete" method="post">
-    <input type="hidden" name="device_id" value="{{ device['device_id'] }}">
-    <input type="hidden" name="room_id" value="{{ room['room_id'] }}">
-    <button type="submit">Delete</button>
-    </form>
-
-</div>
-{% endfor %}
-
-<br>
-<a href="/list">Back to Rooms</a>
-<br>
-<a href="/dashboard">Back to Dashboard</a>
-
+    <div class="navigation-links">
+        <a href="/list">← Back to Rooms</a>
+        <a href="/rules/">🔧 Manage All Rules</a>
+        <a href="/dashboard">📊 Back to Dashboard</a>
+    </div>
 </body>
 </html>

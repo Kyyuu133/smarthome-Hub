@@ -1,35 +1,38 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Add Device</title>
+    <title>Smart Home - Add Device</title>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
+    <h1>📱 Add Device to {{ room["room_name"] }}</h1>
 
-<h2>Add Device to {{ room["room_name"] }}</h2>
+    <div class="form-container">
+        <form action="/devices/create" method="post">
+            <input type="hidden" name="room_id" value="{{ room['room_id'] }}">
 
-<form action="/devices/create" method="post">
-    <input type="hidden" name="room_id" value="{{ room['room_id'] }}">
+            <div class="form-group">
+                <label for="device_name">Device Name:</label>
+                <input type="text" id="device_name" name="device_name" placeholder="e.g., Living Room Lamp" required>
+            </div>
 
-    <label>Device Name:</label>
-    <input type="text" name="device_name" placeholder="z.B. Wohnzimmer-Lampe" required>
-    <br><br>
+            <div class="form-group">
+                <label for="device_type">Device Type:</label>
+                <select id="device_type" name="device_type" required>
+                    <option value="" disabled selected>-- Select Type --</option>
+                    <option value="Lamp">💡 Lamp</option>
+                    <option value="Heater">🔥 Heater</option>
+                    <option value="alarm_clock">⏰ Alarm Clock</option>
+                </select>
+            </div>
 
-    <label>Device Type:</label>
-    <select name="device_type" required>
-        <option value="" disabled selected>-- Typ auswählen --</option>
-        <option value="Lamp">💡 Lamp</option>
-        <option value="Heater">🔥 Heater</option>
-        <option value="alarm_clock">⏰ Alarm Clock</option>
-    </select>
-    <br><br>
+            <button type="submit">Create Device</button>
+        </form>
+    </div>
 
-    <button type="submit">Create Device</button>
-</form>
-
-<br>
-<a href="/devices/list/room?room_id={{ room['room_id'] }}">Back to Devices</a>
-<br>
-<a href="/list">Back to Rooms</a>
-
+    <div class="navigation-links">
+        <a href="/devices/list/room?room_id={{ room['room_id'] }}">← Back to Devices</a>
+        <a href="/list">← Back to Rooms</a>
+    </div>
 </body>
 </html>

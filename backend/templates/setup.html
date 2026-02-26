@@ -1,25 +1,31 @@
 <!DOCTYPE html>
 <html>
-    
-    <head>
-        <title>Account Creation</title>
-    </head>
-
-    <body>
-        <h2>Create new Account</h2>
-
-        <!-- wir rufen den add user call der user_api auf und erstellen eine form für die übergabe von variablen -->
+<head>
+    <title>Smart Home - Create Account</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="login-container">
+        <h2>✨ Create New Account</h2>
         <form action="/add_user" method="post">
-            <label>Username:</label>
-            <input type="text" name="user_name" required>
-            <br><h5>Username must be 2-25 characters, can't contain only spaces, can only contain letters.</h5>
-            <br><br>
-            <label>Password:</label>
-            <input type="password" name="user_password" required>
-            <br><h5>Password must be at least 8 characters long, can't contain only spaces or digits, must contain at least one letter, one number, can't be same as username.</h5>
-            <br><br>
+            <div class="form-group">
+                <label for="user_name">Username:</label>
+                <input type="text" id="user_name" name="user_name" required>
+                <small>Username must be 2-25 characters, can't contain only spaces, can only contain letters.</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="user_password">Password:</label>
+                <input type="password" id="user_password" name="user_password" required>
+                <small>Password must be at least 8 characters long, can't contain only spaces or digits, must contain at least one letter, one number, can't be same as username.</small>
+            </div>
+            
             <button type="submit">Create Account</button>
+            
+            <div class="text-center mt-2">
+                <a href="/">Back to Login</a>
+            </div>
         </form>
-    </body>
-
+    </div>
+</body>
 </html>

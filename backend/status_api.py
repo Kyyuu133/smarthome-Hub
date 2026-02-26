@@ -41,7 +41,6 @@ async def get_status(request: Request):
 
     if event_count == 0:
         print("[DEBUG] Keine Events, Redirect zu /list")
-        # Redirect zur Raumliste (keine Parameter nötig)
         return RedirectResponse("/list", status_code=303)
     
     print("[DEBUG] Rendering template: status/events/overview.html")
@@ -124,32 +123,81 @@ async def get_room_events(request: Request):
         {"request": request, "events": events}
     )
 
-
 @router.get("/events/history", response_class=HTMLResponse)
 async def get_events_history(request: Request):
     """
-    Allgemeine Ereignishistorie (neueste zuerst)
+    Allgemeine Ereignishistorie mit Pagination (30 Events pro Seite, getrennt nach Typ)
+    Neueste Events zuerst (Page 1 = neueste)
     """
     print(f"[DEBUG] Route /status/events/history wurde aufgerufen")
     
+    # Pagination Parameter
+    lamp_page = int(request.query_params.get('lamp_page', 1))
+    heater_page = int(request.query_params.get('heater_page', 1))
+    per_page = 30
+    
     conn, curs = get_db()
+    
     try:
-        curs.execute("SELECT * FROM device_event_log ORDER BY event_id DESC")
-        events = curs.fetchall()
-        print(f"[DEBUG] {len(events)} Events in der History gefunden")
+        # Lampen Events zählen
+        curs.execute("SELECT COUNT(*) as count FROM device_event_log WHERE device_type = 'Lamp'")
+        lamp_count = curs.fetchone()[0]
+        lamp_total_pages = max(1, (lamp_count + per_page - 1) // per_page)
+        
+        # Heater Events zählen
+        curs.execute("SELECT COUNT(*) as count FROM device_event_log WHERE device_type = 'Heater'")
+        heater_count = curs.fetchone()[0]
+        heater_total_pages = max(1, (heater_count + per_page - 1) // per_page)
+        
+        # Lampen Events mit Pagination (neueste zuerst!)
+        lamp_offset = (lamp_page - 1) * per_page
+        curs.execute("""
+            SELECT * FROM device_event_log 
+            WHERE device_type = 'Lamp'
+            ORDER BY event_id DESC
+            LIMIT ? OFFSET ?
+        """, (per_page, lamp_offset))
+        lamp_events = curs.fetchall()
+        
+        # Heater Events mit Pagination (neueste zuerst!)
+        heater_offset = (heater_page - 1) * per_page
+        curs.execute("""
+            SELECT * FROM device_event_log 
+            WHERE device_type = 'Heater'
+            ORDER BY event_id DESC
+            LIMIT ? OFFSET ?
+        """, (per_page, heater_offset))
+        heater_events = curs.fetchall()
+        
+        print(f"[DEBUG] Lampen: {len(lamp_events)} Events (Page {lamp_page}/{lamp_total_pages})")
+        print(f"[DEBUG] Heater: {len(heater_events)} Events (Page {heater_page}/{heater_total_pages})")
+        
     except sqlite3.OperationalError as e:
         print(f"[DEBUG] SQL Error: {e}")
-        events = []
+        lamp_events = []
+        heater_events = []
+        lamp_total_pages = 1
+        heater_total_pages = 1
     finally:
         conn.close()
 
-    if not events:
+    if not lamp_events and not heater_events:
         return RedirectResponse("/list", status_code=303)
     
     return templates.TemplateResponse(
         "status/events/history.html", 
-        {"request": request, "events": events}
+        {
+            "request": request,
+            "events": True,
+            "lamp_events": lamp_events,
+            "heater_events": heater_events,
+            "lamp_page": lamp_page,
+            "heater_page": heater_page,
+            "lamp_total_pages": lamp_total_pages,
+            "heater_total_pages": heater_total_pages
+        }
     )
+
 
 @router.get("/events/device/history/{device_id}", response_class=HTMLResponse)
 async def get_device_history(request: Request, device_id: int):
@@ -187,6 +235,6 @@ async def get_device_history(request: Request, device_id: int):
             "request": request,
             "events": events,
             "device_id": device_id,
-            "device": device,  # ✅ JETZT vorhanden
+            "device": device,
         }
     )
