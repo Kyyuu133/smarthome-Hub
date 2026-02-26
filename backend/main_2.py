@@ -1,5 +1,5 @@
 import sqlite3
-from device import Device, alarm_clock, Lamp, thermostat
+from device import Device, alarm_clock, Lamp
 from emulator import DayEmulator, default_device_callback
 from fastapi import FastAPI
 from fastapi.templating import Jinja2Templates
@@ -92,8 +92,20 @@ def run_simulation():
     hub.load_devices()
 
     emulator = DayEmulator(database=db, speed=1.0, start_hour=0)
-    callback = default_device_callback(hub)
-    emulator.simulate_day(on_hour_callback=callback)
+    
+    # NEU: Dictionary zum Speichern der Stati pro Stunde
+    hourly_device_states = {}
+    
+    # NEU: Callback der zusätzlich einen Snapshot der Stati speichert
+    base_callback = default_device_callback(hub)
+    def callback_with_snapshot(hour, temp, tod, brightness=0):
+        base_callback(hour, temp, tod, brightness=brightness)
+        hourly_device_states[hour] = {
+            d.device_id: int(d.device_status) for d in hub.devices
+        }
+
+    # GEÄNDERT: callback_with_snapshot statt callback übergeben
+    emulator.simulate_day(on_hour_callback=callback_with_snapshot)
 
     log = emulator.get_log()
     today = datetime.now().strftime("%Y-%m-%d")
@@ -113,6 +125,9 @@ def run_simulation():
             if device.device_type == "Lamp":
                 brightness_value = entry["brightness"]
 
+            # GEÄNDERT: Status aus hourly_device_states holen statt device.device_status
+            status_at_hour = hourly_device_states.get(entry["hour"], {}).get(device.device_id, 0)
+
             cursor.execute("""
                 INSERT INTO device_event_log 
                 (device_id, device_name, device_type,
@@ -123,7 +138,7 @@ def run_simulation():
                 device.device_id,
                 device.device_name,
                 device.device_type,
-                int(device.device_status),
+                status_at_hour,   # ← GEÄNDERT
                 f"{today} {entry['hour']:02d}:00:00",
                 temp_value,
                 brightness_value
