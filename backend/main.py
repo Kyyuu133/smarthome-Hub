@@ -11,8 +11,23 @@ from fastapi.responses import RedirectResponse
 from status_api import router as status_router
 from rules_api import router as rules_router
 from datetime import datetime
+import threading
+from contextlib import asynccontextmanager
 
-app = FastAPI()
+def run_simulation_loop():
+    counter = 0
+    while counter < 50:
+        counter += 1
+        run_simulation()
+
+@asynccontextmanager 
+async def lifespan(app: FastAPI):
+    thread = threading.Thread(target=run_simulation_loop) 
+    thread.start() 
+    yield
+
+
+app = FastAPI(lifespan=lifespan)
 app.add_middleware(SessionMiddleware, secret_key="SUPER_SECRET_KEY_123")
 
 app.include_router(users_router)
@@ -92,7 +107,7 @@ def run_simulation():
     hub = SmartHomeHub(db)
     hub.load_devices()
 
-    emulator = DayEmulator(database=db, speed=1.0, start_hour=0)
+    emulator = DayEmulator(database=db, speed=1, start_hour=0)
     
     # NEU: Dictionary zum Speichern der Stati pro Stunde
     hourly_device_states = {}
@@ -149,4 +164,7 @@ def run_simulation():
     conn.close()
 
 if __name__ == "__main__":
-    run_simulation()
+    counter = 0
+    while counter != 7:
+        counter += 1
+        run_simulation()
