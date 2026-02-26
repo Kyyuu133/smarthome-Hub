@@ -252,22 +252,16 @@ def default_device_callback(hub):
         cursor.execute("SELECT * FROM rules")
         rows = cursor.fetchall()
         conn.close()
-        return {row["device_id"]: row for row in rows}
+        return {row["device_type"]: row for row in rows}
 
     def handle_temperature(devices, temperature, rules):
         rule = rules.get("Heater")
-
-        if rule:
-            temp_high = rule["temp_treshold_high"]
-            temp_low = rule["temp_treshold_low"]
-        else:
-            temp_high = 22.0
-            temp_low = 16.0
-
+        temp_high = rule["temp_treshold_high"] if rule else 22.0
+        temp_low  = rule["temp_treshold_low"]  if rule else 16.0
+        
         for device in devices:
             if device.device_type != "Heater":
                 continue
-
             if temperature >= temp_high:
                 device.turn_off()
                 print(f"  [TEMP] {device.device_name} OFF  (>{temp_high}°C)")
@@ -279,24 +273,20 @@ def default_device_callback(hub):
 
     def handle_brightness(devices, brightness, rules):
         rule = rules.get("Lamp")
-
-        if rule:
-            threshold = rule["brightness_treshold_high"]
-        else:
-            threshold = 10  # Default-Wert
+        brightness_threshold = rule["brightness_treshold_high"] if rule else 10
+            
 
         for device in devices:
             if device.device_type != "Lamp":
                 continue
-
-            if brightness >= threshold:
+            if brightness >= brightness_threshold:
                 device.turn_on()
                 if hasattr(device, "set_brightness"):
                     device.set_brightness(brightness)
                 print(f"  [LAMP] {device.device_name} ON  @ {brightness}%")
             else:
                 device.turn_off()
-                print(f"  [LAMP] {device.device_name} OFF  (<{threshold}%)")
+                print(f"  [LAMP] {device.device_name} OFF  (unter Threshold {brightness_threshold}%)")
 
     def callback(hour, temperature, time_of_day, brightness=0):
         rules = load_rules()
@@ -308,7 +298,7 @@ def default_device_callback(hub):
 
 
 
-# Standalone-Test für  Emulator ohne Main.py und Datenbank. über day_emulator.py aufrufbar
+# Standalone-Test für  Emulator ohne Main.py und Datenbank. über emulator.py aufrufbar
 
 
 if __name__ == "__main__":

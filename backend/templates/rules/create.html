@@ -21,6 +21,8 @@
     <div class="form-container">
         <form action="/rules/create/{{ device['device_id'] }}" method="post">
             
+            {% if device["device_type"] == "Heater" %}
+
             <h3>🌡️ Temperature Thresholds</h3>
             
             <div class="form-group">
@@ -44,7 +46,8 @@
             </div>
             
             <hr style="margin: 30px 0;">
-            
+
+            {% elif device["device_type"] == "Lamp" %}
             <h3>💡 Brightness Thresholds</h3>
             
             <div class="form-group">
@@ -70,7 +73,9 @@
                        placeholder="e.g., 20">
                 <small>Device will activate when brightness exceeds this percentage</small>
             </div>
-            
+                
+            {% endif %}
+
             <div class="btn-container">
                 <button type="submit" class="btn btn-submit">✓ Create Rule</button>
                 <a href="/rules/device/{{ device['device_id'] }}" class="btn btn-cancel">✗ Cancel</a>

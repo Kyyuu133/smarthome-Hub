@@ -20,6 +20,9 @@
 <br>
 <br>
 {% if events %}
+
+{% if device["device_type"] == "Heater" %}
+
 <table border="1" cellpadding="8" cellspacing="0">
     <thead>
         <tr>
@@ -28,7 +31,6 @@
             <th>Device ID</th>
             <th>Status</th>
             <th>Temp (°C)</th>
-            <th>Brightness (lux)</th>
             <th>Timestamp</th>
         </tr>
     </thead>
@@ -40,12 +42,41 @@
             <td>{{ e["device_id"] }}</td>
             <td>{{ "✅" if e["device_status"] else "❌" }}</td>
             <td>{{ e["temp_value"] }}</td>
+            <td>{{ e["event_timestamp"] }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% elif device["device_type"] == "Lamp" %}
+
+
+<table border="1" cellpadding="8" cellspacing="0">
+    <thead>
+        <tr>
+            <th>Event ID</th>
+            <th>Device Name</th>
+            <th>Device ID</th>
+            <th>Status</th>
+            <th>Brightness (%)</th>
+            <th>Timestamp</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for e in events %}
+        <tr>
+            <td>{{ e["event_id"] }}</td>
+            <td>{{ e["device_name"] }}</td>
+            <td>{{ e["device_id"] }}</td>
+            <td>{{ "❌" if e["device_status"] else "✅" }}</td>
             <td>{{ e["brightness_value"] }}</td>
             <td>{{ e["event_timestamp"] }}</td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
+
+{% endif %}
+
 {% else %}
 <p>No events found for this device.</p>
 {% endif %}
