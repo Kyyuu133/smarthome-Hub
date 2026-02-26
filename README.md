@@ -127,39 +127,35 @@ Das System verwendet SQLite mit folgenden Haupttabellen:
 
 **Nutzer Anlegen**
 
-![[Create New Account.png](/)]
+![[Create New Account.png](/README_screenshots/Create%20New%20Account.png)]
 
 **Raum erstellen**
 
-![[Create Room.png]]
+![[Create Room.png](/README_screenshots/Create%20Room.png)]
 
 **Raum verwalten**
 
-![[Manage Existing Room.png]]
+![[Manage Existing Room.png](/README_screenshots/Manage%20Existing%20Room.png)]
 
 **Devices erstellen** 
 
-![[Add Device for Room.png]]
+![[Add Device for Room.png](/README_screenshots/Add%20Device%20for%20Room.png)]
 
 **Rule setzen**
 
-![[Adjust Rule for specific device.png]]
-
-**Rules für ein Spezifisches Device**
-
-![[Adjust Rule for specific device.png]]
+![[Adjust Rule for specific device.png](/README_screenshots/Adjust%20Rule%20for%20specific%20device.png)]
 
 **Device Event Log History für ein Device**
 
-![[device event log history for device.png]]
+![[device event log history for device.png](/README_screenshots/device%20event%20log%20history%20for%20device.png)]
 
 **Device Event Log History für alle Devices**
 
-![[device event log history for all.png]]
+![[device event log history for all.png](/README_screenshots/device%20event%20log%20history%20for%20all.png)]
 
 **Aktueller Status aller Devices**
 
-![[Current States all Devices.png]]
+![[Current States all Devices.png](/README_screenshots/Current%20States%20all%20Devices.png)]
 
 ---
 
