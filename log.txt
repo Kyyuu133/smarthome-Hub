@@ -155,13 +155,14 @@ ________________________________________________________________________________
 
 _________________________________________________________________________________________________________
 
-Montag, 16.02.2026 (Timo):  
+Montag, 23.02.2026 (Timo):  
 _________________________________________________________________________________________________________
         Alle: 
 
         -  Revision 
         -  Funktionstest interoperabilität der einzelnen Programme (API) in der Datenbank
         -  Finale DB besprochen
+        
 
         --------------------------------------------------------------------------------------------------
         Nachmittag:
@@ -180,3 +181,45 @@ ________________________________________________________________________________
 
 _________________________________________________________________________________________________________
 
+Dienstag, 24.02.2026 (Thomas):  
+_________________________________________________________________________________________________________
+        Alle: 
+
+        -  Revision 
+        
+        --------------------------------------------------------------------------------------------------
+        Nachmittag:
+        --------------------------------------------------------------------------------------------------
+        Timo:   sql status queries, device_eventlog testen  
+                frontend device_event log und sql debug
+                
+        Niki:   brightness, temperature und Zeit werden in den Event Log geschrieben
+
+        Thomas: testing
+                
+        Kaan:   status api querys fürs frontend bereitgestellt
+                routing logik verändert ins dashboard eingebunden
+                       
+
+_________________________________________________________________________________________________________
+
+Mittwoch, 25.02.2026 (Thomas):  
+_________________________________________________________________________________________________________
+        Alle: 
+
+        -  Revision 
+        
+        --------------------------------------------------------------------------------------------------
+        Nachmittag:
+        --------------------------------------------------------------------------------------------------
+        Timo:   queries, device_eventlog debug
+                rule_automation queries 
+                
+        Niki:   Simulation angepasst an event_log 
+
+        Thomas: log.txt aktualisiert und device.py gefixt (hoffentlich)
+                
+        Kaan:   automationen querys von timo einbinden ins dashboard,
+                kosmetisch aufarbeiten, rules api → html format,
+                create, edit, delete, view implementiert
+                       
